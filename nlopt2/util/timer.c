@@ -22,20 +22,16 @@
 
 #include "nlopt-util.h"
 
-#if TIME_WITH_SYS_TIME
-# include <sys/time.h>
-# include <time.h>
-#else
-# if HAVE_SYS_TIME_H
-#  include <sys/time.h>
-# else
-#  include <time.h>
-# endif
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
+#ifdef HAVE_TIME_H
+#include <time.h>
+#endif
+#if defined(_WIN32) || defined(__WIN32__)
+#include <windows.h>
 #endif
 
-#if defined(_WIN32) || defined(__WIN32__)
-#  include <windows.h>    
-#endif
 
 /* return time in seconds since some arbitrary point in the past */
 double nlopt_seconds(void)
