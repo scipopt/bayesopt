@@ -45,8 +45,6 @@
 #include <cstdio>
 
 
-inline std::string NowTime();
-
 enum TLogLevel {logERROR, logWARNING, logINFO, logDEBUG, 
 		logDEBUG1, logDEBUG2, logDEBUG3, logDEBUG4};
 
@@ -76,8 +74,7 @@ Log<T>::Log()
 template <typename T>
 std::ostringstream& Log<T>::Get(TLogLevel level)
 {
-    os << "- " << NowTime();
-    os << " " << ToString(level) << ": ";
+    os << "- " << ToString(level) << ": ";
     os << std::string(level > logDEBUG ? level - logDEBUG : 0, '\t');
     return os;
 }
@@ -171,55 +168,5 @@ class FILELOG_DECLSPEC FILELog : public Log<Output2FILE> {};
     if (level > FILELOG_MAX_LEVEL) ;\
     else if (level > FILELog::ReportingLevel() || !Output2FILE::Stream()) ; \
     else FILELog().Get(level)
-
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-
-#ifndef NOMINMAX
-#  define NOMINMAX
-#endif
-#include <windows.h>
-
-inline std::string NowTime()
-{
-    const int MAX_LEN = 200;
-    char buffer[MAX_LEN];
-    if (GetTimeFormatA(LOCALE_USER_DEFAULT, 0, 0, 
-            "HH':'mm':'ss", buffer, MAX_LEN) == 0)
-        return "Error in NowTime()";
-
-    char result[100] = {0};
-    static DWORD first = GetTickCount();
-    std::sprintf(result, "%s.%03ld", buffer, (long)(GetTickCount() - first) % 1000); 
-    return result;
-}
-
-#else
-
-#include <sys/time.h>
-
-inline std::string NowTime()
-{
-  struct timeval tv;
-  gettimeofday(&tv, 0);
-  char buffer[11];
-  tm r = {0};
-  strftime(buffer, sizeof(buffer), "%X", localtime_r(&tv.tv_sec, &r));
-  char result[100] = {0};
-  std::sprintf(result, "%s.%06ld", buffer, (long)tv.tv_usec);
-  return result;
-
-    // char buffer[11];
-    // time_t t;
-    // time(&t);
-    // tm r = {0};
-    // strftime(buffer, sizeof(buffer), "%X", localtime_r(&t, &r));
-    // struct timeval tv;
-    // gettimeofday(&tv, 0);
-    // char result[100] = {0};
-    // std::sprintf(result, "%s.%03ld", buffer, (long)tv.tv_usec / 1000); 
-    // return result;
-}
-
-#endif //WIN32
 
 #endif //__LOG_H__
