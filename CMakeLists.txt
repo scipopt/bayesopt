@@ -18,8 +18,13 @@
 #    along with BayesOpt.  If not, see <http://www.gnu.org/licenses/>.
 # ------------------------------------------------------------------------
 
+CMAKE_MINIMUM_REQUIRED(VERSION 3.11)
+
+if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 NEW)
+endif()
+
 PROJECT(BayesOpt CXX)
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} 
 		      ${CMAKE_CURRENT_SOURCE_DIR}/cmake)

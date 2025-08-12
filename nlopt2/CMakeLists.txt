@@ -16,8 +16,8 @@
 # Ruben Martinez-Cantin - 2012
 #==============================================================================
 
+CMAKE_MINIMUM_REQUIRED(VERSION 3.11)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 enable_language(C)
 INCLUDE(CheckIncludeFiles)
 INCLUDE(CheckFunctionExists)
