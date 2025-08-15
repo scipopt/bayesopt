@@ -74,9 +74,9 @@ namespace bayesopt
     vectord vd(kn);
     inplace_solve(mL,vd,ublas::lower_tag());
     double basisPred = mMean.muTimesFeat(query);
-    double yPred = basisPred + ublas::inner_prod(vd,mAlphaV);
-    double sPred = sqrt(mSigma*(kq - ublas::inner_prod(vd,vd)));
-    
+    double yPred = basisPred + ublas::inner_prod(vd, mAlphaV);
+    double sPred = sqrt(std::max(mSigma * (kq - ublas::inner_prod(vd, vd)), 0.0));
+
     d_->setMeanAndStd(yPred,sPred);
     return d_;
   }

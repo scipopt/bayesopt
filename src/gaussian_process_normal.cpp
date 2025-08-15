@@ -75,15 +75,8 @@ namespace bayesopt
     vectord rho(rq);
     inplace_solve(mD,rho,ublas::lower_tag());
     
-    double yPred = inner_prod(phi,mWMap) + inner_prod(v,mVf);
-    double sPred = sqrt( mSigma * (kq - inner_prod(v,v) 
-			        + inner_prod(rho,rho)));
-
-    if ((boost::math::isnan(yPred)) || (boost::math::isnan(sPred)))
-      {
-	throw std::runtime_error("Error in prediction. NaN found.");
-      }
-					
+    double yPred = inner_prod(phi, mWMap) + inner_prod(v, mVf);
+    double sPred = sqrt(std::max(mSigma * (kq - inner_prod(v, v) + inner_prod(rho, rho)), 0.0));
 
     d_->setMeanAndStd(yPred,sPred);
     return d_;

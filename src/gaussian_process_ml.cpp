@@ -67,9 +67,8 @@ namespace bayesopt
     vectord rho(rq);
     inplace_solve(mL2,rho,ublas::lower_tag());
     
-    double yPred = inner_prod(phi,mWML) + inner_prod(v,mAlphaF);
-    double sPred = sqrt( mSigma * (kq - inner_prod(v,v) 
-				   + inner_prod(rho,rho)));
+    double yPred = inner_prod(phi, mWML) + inner_prod(v, mAlphaF);
+    double sPred = sqrt(std::max(mSigma * (kq - inner_prod(v, v) + inner_prod(rho, rho)), 0.0));
 
     d_->setMeanAndStd(yPred,sPred);
     return d_;
