@@ -215,6 +215,29 @@ namespace bayesopt
     return remapPoint(getPointAtMinimum());
   }
 
+  vectord BayesOptBase::getExpectedResult()
+  {
+    const vecOfvec& samples = mModel->getData()->mX;
+
+    if( samples.empty() )
+      throw std::runtime_error("Optimization data missing");
+
+    double bestmean = std::numeric_limits<double>::infinity();
+    size_t bestindex = 0;
+
+    for( size_t index = 0; index < samples.size(); ++index )
+    {
+      const double mean = mModel->getPrediction(samples[index])->getMean();
+
+      if( bestmean >= mean )
+      {
+        bestmean = mean;
+        bestindex = index;
+      }
+    }
+
+    return remapPoint(samples[bestindex]);
+  }
 
   // SAVE-RESTORE INTERFACE
   void BayesOptBase::saveOptimization(BOptState &state)
