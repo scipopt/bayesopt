@@ -134,8 +134,11 @@ namespace bayesopt {
     /** Initialize the optimization process.  */
     void initializeOptimization();
     
-    /** Once the optimization has been perfomed, return the optimal point. */
+    /** Once the optimization has been performed, return the optimal point. */
     vectord getFinalResult();
+
+    /** Once the optimization has been performed, return the expected point. */
+    vectord getExpectedResult();
 
     /** Saves the current state of the optimization process into a state class. */
     void saveOptimization(BOptState &state);
