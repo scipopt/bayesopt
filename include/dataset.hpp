@@ -58,13 +58,10 @@ namespace bayesopt
     vectord getPointAtMinimum() const;
     double getValueAtMinimum() const;
     size_t getNSamples() const;
-    void updateMinMax( size_t i );
 
     vecOfvec mX;                                         ///< Data inputs
     vectord mY;                                          ///< Data values
-
-  private:
-    size_t mMinIndex, mMaxIndex;	
+    size_t mMinIndex, mMaxIndex;                         ///< Data optima
   };
 
 
@@ -72,8 +69,8 @@ namespace bayesopt
   
   inline void Dataset::addSample(const vectord &x, double y)
   {
-    mX.push_back(x); utils::append(mY,y);
-    updateMinMax(mY.size()-1);
+    mX.push_back(x);
+    utils::append(mY,y);
   }
 
   inline double Dataset::getSampleY(size_t index) const
@@ -92,11 +89,6 @@ namespace bayesopt
   inline vectord Dataset::getPointAtMinimum() const { return mX[mMinIndex]; };
   inline double Dataset::getValueAtMinimum() const { return mY(mMinIndex); };
   inline size_t Dataset::getNSamples() const { return mY.size(); };
-  inline void Dataset::updateMinMax( size_t i )
-  {
-    if ( mY(mMinIndex) > mY(i) )       mMinIndex = i;
-    else if ( mY(mMaxIndex) < mY(i) )  mMaxIndex = i;
-  };
 
   /**@}*/
   

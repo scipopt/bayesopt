@@ -149,6 +149,8 @@ namespace bayesopt
         mModel->updateSurrogateModel();
       } 
 
+    mModel->updateMinMax();
+
     plotStepData(mCurrentIter,xNext,yNext);
     mModel->updateCriteria(xNext);
     mCurrentIter++;
@@ -204,8 +206,10 @@ namespace bayesopt
     
     mModel->updateHyperParameters();
     mModel->fitSurrogateModel();
-    mCurrentIter = 0;
 
+    mModel->updateMinMax();
+
+    mCurrentIter = 0;
     mCounterStuck = 0;
     mYPrev = 0.0;
   }
@@ -214,7 +218,6 @@ namespace bayesopt
   {
     return remapPoint(getPointAtMinimum());
   }
-
 
   // SAVE-RESTORE INTERFACE
   void BayesOptBase::saveOptimization(BOptState &state)
@@ -268,7 +271,9 @@ namespace bayesopt
     // Calculate the posterior model
     mModel->updateHyperParameters();
     mModel->fitSurrogateModel();
-    
+
+    mModel->updateMinMax();
+
     mCurrentIter = state.mCurrentIter;
     mCounterStuck = state.mCounterStuck;
     mYPrev = state.mYPrev;

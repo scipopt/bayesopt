@@ -81,6 +81,30 @@ namespace bayesopt
   void PosteriorModel::addSample(const vectord &x, double y)
   {  mData.addSample(x,y); mMean.addNewPoint(x);  };
 
+  void PosteriorModel::updateMinMax()
+  {
+    double minmean = std::numeric_limits<double>::infinity();
+    double maxmean = -std::numeric_limits<double>::infinity();
 
+    mData.mMinIndex = 0;
+    mData.mMaxIndex = 0;
+
+    for( size_t index = 0; index < mData.mX.size(); ++index )
+    {
+      const double mean = getPrediction(mData.mX[index])->getMean();
+
+      if( minmean >= mean )
+      {
+        minmean = mean;
+        mData.mMinIndex = index;
+      }
+
+      if( maxmean <= mean )
+      {
+        maxmean = mean;
+        mData.mMaxIndex = index;
+      }
+    }
+  }
 } //namespace bayesopt
 
