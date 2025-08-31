@@ -219,6 +219,16 @@ namespace bayesopt
     return remapPoint(getPointAtMinimum());
   }
 
+  vecOfvec BayesOptBase::getFinalResults()
+  {
+    vecOfvec results(getPointsAtMinimum());
+
+    for( auto& result : results )
+      result = remapPoint(result);
+
+    return results;
+  }
+
   // SAVE-RESTORE INTERFACE
   void BayesOptBase::saveOptimization(BOptState &state)
   {   
@@ -315,8 +325,11 @@ namespace bayesopt
   
 
   // PROTECTED
-  vectord BayesOptBase::getPointAtMinimum() 
+  vectord BayesOptBase::getPointAtMinimum()
   { return mModel->getPointAtMinimum(); };
+
+  vecOfvec BayesOptBase::getPointsAtMinimum()
+  { return mModel->getPointsAtMinimum(); };
 
   double BayesOptBase::evaluateSampleInternal( const vectord &query )
   { 

@@ -106,5 +106,63 @@ namespace bayesopt
       }
     }
   }
+
+  vecOfvec PosteriorModel::getPointsAtMinimum()
+  {
+    vectori indices(mData.mX.size());
+
+    std::iota(indices.begin(), indices.end(), 0);
+    std::sort(indices.begin(), indices.end(), [this](size_t i, size_t j)
+    {
+      const double meanfirst = getPrediction(this->mData.mX[i])->getMean();
+      const double meansecond = getPrediction(this->mData.mX[j])->getMean();
+      if( meanfirst != meansecond )
+        return meanfirst < meansecond;
+      if( std::lexicographical_compare(this->mData.mX[i].begin(), this->mData.mX[i].end(), this->mData.mX[j].begin(), this->mData.mX[j].end()) )
+        return true;
+      if( std::lexicographical_compare(this->mData.mX[j].begin(), this->mData.mX[j].end(), this->mData.mX[i].begin(), this->mData.mX[i].end()) )
+        return false;
+      return i > j;
+    });
+
+    size_t beginposition = 0;
+    size_t endposition = 1;
+
+    while( endposition < indices.size() )
+    {
+      if( !std::equal(mData.mX[indices[beginposition]].begin(), mData.mX[indices[beginposition]].end(), mData.mX[indices[endposition]].begin()) )
+      {
+        ++beginposition;
+        indices[beginposition] = indices[endposition];
+      }
+
+      ++endposition;
+    }
+
+    indices.resize(beginposition + 1);
+    beginposition = 0;
+    endposition = 1;
+
+    while( beginposition < indices.size() )
+    {
+      if( endposition == indices.size() || getPrediction(mData.mX[indices[beginposition]])->getMean() != getPrediction(mData.mX[indices[endposition]])->getMean() )
+      {
+        std::sort(indices.rend() - endposition - 1, indices.rend() - beginposition - 1);
+        beginposition = endposition;
+      }
+
+      ++endposition;
+    }
+    assert(indices.empty() || indices[0] == mData.mMinIndex);
+
+    vecOfvec results;
+
+    results.reserve(indices.size());
+
+    for( const auto& index : indices )
+      results.push_back(mData.mX[index]);
+
+    return results;
+  }
 } //namespace bayesopt
 

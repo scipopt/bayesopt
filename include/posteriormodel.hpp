@@ -79,6 +79,7 @@ namespace bayesopt {
     void updateMinMax();
     double getValueAtMinimum();
     vectord getPointAtMinimum();
+    vecOfvec getPointsAtMinimum();
 
     void plotDataset(TLogLevel level);
 

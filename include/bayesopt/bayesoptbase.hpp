@@ -133,9 +133,12 @@ namespace bayesopt {
 
     /** Initialize the optimization process.  */
     void initializeOptimization();
-    
+
     /** Once the optimization has been performed, return the optimal point. */
     vectord getFinalResult();
+
+    /** Once the optimization has been performed, return the optimal points. */
+    vecOfvec getFinalResults();
 
     /** Saves the current state of the optimization process into a state class. */
     void saveOptimization(BOptState &state);
@@ -154,6 +157,9 @@ namespace bayesopt {
   protected:
     /** Get optimal point in the inner space (e.g.: [0-1] hypercube) */
     vectord getPointAtMinimum();
+
+    /** Get optimal points in the inner space (e.g.: [0-1] hypercube) */
+    vecOfvec getPointsAtMinimum();
 
     /** Wrapper for the target function adding any preprocessing or
 	constraint. It also maps the box constrains to the [0,1]
