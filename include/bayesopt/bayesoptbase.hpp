@@ -140,6 +140,9 @@ namespace bayesopt {
     /** Once the optimization has been performed, return the expected point. */
     vectord getExpectedResult();
 
+    /** Once the optimization has been performed, return the expected points. */
+    vecOfvec getExpectedResults();
+
     /** Saves the current state of the optimization process into a state class. */
     void saveOptimization(BOptState &state);
     

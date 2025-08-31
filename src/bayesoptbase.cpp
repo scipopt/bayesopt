@@ -239,6 +239,69 @@ namespace bayesopt
     return remapPoint(samples[bestindex]);
   }
 
+  vecOfvec BayesOptBase::getExpectedResults()
+  {
+    const vecOfvec& samples = mModel->getData()->mX;
+
+    if( samples.empty() )
+      throw std::runtime_error("Optimization data missing");
+
+    std::vector<size_t> indices(samples.size());
+
+    std::iota(indices.begin(), indices.end(), 0);
+    std::sort(indices.begin(), indices.end(), [this, &samples](size_t i, size_t j)
+    {
+      const double meanfirst = this->mModel->getPrediction(samples[i])->getMean();
+      const double meansecond = this->mModel->getPrediction(samples[j])->getMean();
+      if( meanfirst != meansecond )
+        return meanfirst < meansecond;
+      if( std::lexicographical_compare(samples[i].begin(), samples[i].end(), samples[j].begin(), samples[j].end()) )
+        return true;
+      if( std::lexicographical_compare(samples[j].begin(), samples[j].end(), samples[i].begin(), samples[i].end()) )
+        return false;
+      return i > j;
+    });
+
+    size_t beginposition = 0;
+    size_t endposition = 1;
+
+    while( endposition < indices.size() )
+    {
+      if( !std::equal(samples[indices[beginposition]].begin(), samples[indices[beginposition]].end(), samples[indices[endposition]].begin()) )
+      {
+        ++beginposition;
+        indices[beginposition] = indices[endposition];
+      }
+
+      ++endposition;
+    }
+
+    indices.resize(beginposition + 1);
+    indices.shrink_to_fit();
+    beginposition = 0;
+    endposition = 1;
+
+    while( beginposition < indices.size() )
+    {
+      if( endposition == indices.size() || mModel->getPrediction(samples[indices[beginposition]])->getMean() != mModel->getPrediction(samples[indices[endposition]])->getMean() )
+      {
+        std::sort(indices.rend() - endposition - 1, indices.rend() - beginposition - 1);
+        beginposition = endposition;
+      }
+
+      ++endposition;
+    }
+
+    vecOfvec results;
+
+    results.reserve(indices.size());
+
+    for( const auto& index : indices )
+      results.push_back(remapPoint(samples[index]));
+
+    return results;
+  }
+
   // SAVE-RESTORE INTERFACE
   void BayesOptBase::saveOptimization(BOptState &state)
   {   
