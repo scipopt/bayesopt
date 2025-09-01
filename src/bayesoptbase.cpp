@@ -95,16 +95,18 @@ namespace bayesopt
         initializeOptimization();
       }
 
-    mModel->setCriteria(mEngine);
-
-    for (size_t ii = mCurrentIter; ii < mParameters.n_iterations; ++ii)
-      {      
-        stepOptimization();
-      }
-   
-    bestPoint = getFinalResult();
+    reoptimize(bestPoint);
   } // optimize
 
+  void BayesOptBase::reoptimize(vectord& bestPoint)
+  {
+    mModel->setCriteria(mEngine);
+
+    for( size_t ii = mCurrentIter; ii < mParameters.n_iterations; ++ii )
+      stepOptimization();
+
+    bestPoint = getFinalResult();
+  }
 
   void BayesOptBase::stepOptimization()
   {
