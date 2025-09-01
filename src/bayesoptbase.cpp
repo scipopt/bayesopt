@@ -94,15 +94,17 @@ namespace bayesopt
 	// Initialize a new state
         initializeOptimization();
       }
-    
-    for (size_t ii = mCurrentIter; ii < mParameters.n_iterations; ++ii)
-      {      
-        stepOptimization();
-      }
-   
-    bestPoint = getFinalResult();
+
+    reoptimize(bestPoint);
   } // optimize
 
+  void BayesOptBase::reoptimize(vectord& bestPoint)
+  {
+    for( size_t ii = mCurrentIter; ii < mParameters.n_iterations; ++ii )
+      stepOptimization();
+
+    bestPoint = getFinalResult();
+  }
 
   void BayesOptBase::stepOptimization()
   {

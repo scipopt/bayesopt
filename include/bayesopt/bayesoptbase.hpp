@@ -125,6 +125,17 @@ namespace bayesopt {
      */
     void optimize(vectord &bestPoint);
 
+    /**
+     * \brief Execute the reoptimization process of the function defined
+     * in evaluateSample.
+     *
+     * @see evaluateSample
+     * @see checkReachability
+     *
+     * @param bestPoint returns point with the optimum value in a ublas::vector.
+     */
+    void reoptimize(vectord& bestPoint);
+
     /** 
      * \brief Execute ONE step the optimization process of the
      * function defined in evaluateSample.  
