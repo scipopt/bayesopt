@@ -52,7 +52,6 @@ namespace bayesopt  {
   { 
     mCallback.reset(new CritCallback(this));
     cOptimizer.reset(new NLOPT_Optimization(mCallback.get(),dim));
-    cOptimizer->setAlgorithm(COMBINED);
     cOptimizer->setMaxEvals(parameters.n_inner_iterations);
 
     vectord lowerBound = zvectord(mDims);

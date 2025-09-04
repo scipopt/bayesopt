@@ -41,17 +41,18 @@ namespace bayesopt
     kOptimizer.reset(new NLOPT_Optimization(mGP.get(),nhp));
 
     //TODO: Generalize
-    if (mParameters.sc_type == SC_ML)
-      {
-	// local search to avoid underfitting
-	kOptimizer->setAlgorithm(BOBYQA); 
-	kOptimizer->setMaxEvals(10*nhp);
-      }
+    if( mParameters.sc_type == SC_ML )
+    {
+      // local search to avoid underfitting
+      kOptimizer->setAlgorithm(BOBYQA);
+      kOptimizer->setMaxEvals(10 * nhp);
+    }
     else
-      {
-	kOptimizer->setAlgorithm(COMBINED);
-	kOptimizer->setMaxEvals(20*nhp);
-      }
+    {
+      kOptimizer->setAlgorithm(DIRECT);
+      kOptimizer->setMaxEvals(20 * nhp);
+    }
+
     //Limits in log space
     kOptimizer->setLimits(svectord(nhp,-6.0),svectord(nhp,1.0));
   } 
