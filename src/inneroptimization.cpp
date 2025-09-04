@@ -208,36 +208,16 @@ namespace bayesopt
 				    "(gradient/no gradient)");
       }
 
-    fmin = run_nlopt(algo,fpointer,Xnext,maxf1,
-		     mDown,mUp,objPointer);
+    fmin = run_nlopt(algo, fpointer, Xnext, maxf1, mDown, mUp, objPointer);
+    FILE_LOG(logDEBUG) << "1st opt " << maxf1 << "-> " << Xnext << " f() ->" << fmin;
 
-    FILE_LOG(logDEBUG) << "1st opt " << maxf1 << "-> " << Xnext 
-		       << " f() ->" << fmin;
-    if (maxf2)
-      {
-	//If the point is exactly at the limit, we may have trouble.
-    	for (size_t i = 0; i < n; ++i) 
-	  {
-	    if (Xnext(i)-mDown[i] < 0.0001)
-	      {
-		Xnext(i) += 0.0001;
-		FILE_LOG(logDEBUG) << "Hacking point for BOBYQA. THIS SHOULD NOT HAPPEN";
-	      }
-	    if (mUp[i] - Xnext(i) < 0.0001)
-	      {
-		Xnext(i) -= 0.0001;
-		FILE_LOG(logDEBUG) << "Hacking point for BOBYQA. THIS SHOULD NOT HAPPEN";
-	      }
-	  }
-
-	// BOBYQA may fail in this point. Could it be that EI is not twice differentiable?
-	// fmin = run_nlopt(nlopt::LN_BOBYQA,fpointer,Xnext,maxf2,
-	// 		 mDown,mUp,objPointer);
-	fmin = run_nlopt(nlopt::LN_COBYLA,fpointer,Xnext,maxf2,
-			 mDown,mUp,objPointer);
-	FILE_LOG(logDEBUG) << "2nd opt " << maxf2 << "-> " << Xnext 
-			   << " f() ->" << fmin;
-      }
+    if( maxf2 )
+    {
+      // BOBYQA may fail in this point. Could it be that EI is not twice differentiable?
+      // fmin = run_nlopt(nlopt::LN_BOBYQA, fpointer, Xnext, maxf2, mDown, mUp, objPointer);
+      fmin = run_nlopt(nlopt::LN_COBYLA, fpointer, Xnext, maxf2, mDown, mUp, objPointer);
+      FILE_LOG(logDEBUG) << "2nd opt " << maxf2 << "-> " << Xnext << " f() ->" << fmin;
+    }
 
     return fmin;
 
