@@ -60,6 +60,7 @@ namespace bayesopt {
     void fitSurrogateModel();
     void updateSurrogateModel();
 
+    void setCriteria(randEngine& eng);
     double evaluateCriteria(const vectord& query);
     void updateCriteria(const vectord& query);
 
@@ -74,7 +75,6 @@ namespace bayesopt {
     PosteriorFixed();
 
     void setSurrogateModel(randEngine& eng);    
-    void setCriteria(randEngine& eng);
 
   private:  // Members
     boost::scoped_ptr<NonParametricProcess> mGP; ///< Pointer to surrogate model

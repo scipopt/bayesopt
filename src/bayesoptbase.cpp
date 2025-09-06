@@ -94,7 +94,9 @@ namespace bayesopt
 	// Initialize a new state
         initializeOptimization();
       }
-    
+
+    mModel->setCriteria(mEngine);
+
     for (size_t ii = mCurrentIter; ii < mParameters.n_iterations; ++ii)
       {      
         stepOptimization();

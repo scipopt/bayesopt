@@ -30,9 +30,8 @@ namespace bayesopt
   {
     //TODO: Take nParticles from parameters
     
-    // Configure Surrogate and Criteria Functions
+    // Configure Surrogate Model
     setSurrogateModel(eng);
-    setCriteria(eng);
 
     // Seting MCMC for kernel hyperparameters...
     // We use the first GP as the "walker" to get the particles. Then,

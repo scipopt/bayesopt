@@ -62,6 +62,7 @@ namespace bayesopt {
     virtual void fitSurrogateModel() = 0;
     virtual void updateSurrogateModel() = 0;
 
+    virtual void setCriteria(randEngine& eng) = 0;
     virtual double evaluateCriteria(const vectord& query) = 0;
     virtual void updateCriteria(const vectord& query) = 0;
 

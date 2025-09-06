@@ -31,9 +31,8 @@ namespace bayesopt
 				 randEngine& eng):
     PosteriorModel(dim,parameters,eng)
   {
-    // Configure Surrogate and Criteria Functions
+    // Configure Surrogate Model
     setSurrogateModel(eng);
-    setCriteria(eng);
   }
 
   PosteriorFixed::~PosteriorFixed()

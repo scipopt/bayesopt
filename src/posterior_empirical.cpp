@@ -32,9 +32,8 @@ namespace bayesopt
 				 randEngine& eng):
     PosteriorModel(dim,parameters,eng)
   {
-    // Configure Surrogate and Criteria Functions
+    // Configure Surrogate Model
     setSurrogateModel(eng);
-    setCriteria(eng);
 
     // Seting kernel optimization
     size_t nhp = mGP->nHyperParameters();

@@ -66,6 +66,7 @@ namespace bayesopt {
     void fitSurrogateModel();
     void updateSurrogateModel();
 
+    void setCriteria(randEngine& eng);
     double evaluateCriteria(const vectord& query);
     void updateCriteria(const vectord& query);
 
@@ -78,7 +79,6 @@ namespace bayesopt {
    
   private:
     void setSurrogateModel(randEngine& eng);    
-    void setCriteria(randEngine& eng);
 
   private:  // Members
     size_t nParticles;
