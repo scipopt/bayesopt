@@ -52,7 +52,7 @@ namespace bayesopt {
         void saveToFile(std::string filename);
         
         /** Loads the state from the provided file and takes program_params values if needed */
-        bool loadFromFile(std::string filename, Parameters &program_params);
+        bool loadFromFile(std::string filename, Parameters& program_params);
         
         // BayesOptBase members
         size_t mCurrentIter;

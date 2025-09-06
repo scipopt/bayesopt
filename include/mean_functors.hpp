@@ -116,7 +116,7 @@ namespace bayesopt
   class MeanModel
   {
   public:
-    MeanModel(size_t dim, Parameters parameters);
+    MeanModel(size_t dim, Parameters& parameters);
     virtual ~MeanModel() {};
 
     ParametricFunction* getMeanFunc();

@@ -28,7 +28,7 @@ namespace bayesopt
 {
 
 
-  EmpiricalBayes::EmpiricalBayes(size_t dim, Parameters parameters, 
+  EmpiricalBayes::EmpiricalBayes(size_t dim, Parameters& parameters,
 				 randEngine& eng):
     PosteriorModel(dim,parameters,eng)
   {

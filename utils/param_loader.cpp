@@ -25,7 +25,7 @@
 namespace bayesopt
 {       
   namespace utils{      
-    bool ParamLoader::load(std::string filename, Parameters &par){
+    bool ParamLoader::load(std::string filename, Parameters& par){
         utils::FileParser fp(filename);
         if(!fp.fileExists()){
             return false;
@@ -38,14 +38,14 @@ namespace bayesopt
         return true;
     }
     
-    void ParamLoader::save(std::string filename, Parameters &par){
+    void ParamLoader::save(std::string filename, Parameters& par){
         utils::FileParser fp(filename);
         fp.openOutput();
         
         loadOrSave(fp, par);
     }
     
-    void ParamLoader::loadOrSave(utils::FileParser &fp, Parameters &par){
+    void ParamLoader::loadOrSave(utils::FileParser& fp, Parameters& par){
         fp.readOrWrite("n_iterations", par.n_iterations);
         fp.readOrWrite("n_inner_iterations", par.n_inner_iterations);
         fp.readOrWrite("n_init_samples", par.n_init_samples);

@@ -58,7 +58,7 @@ namespace bayesopt {
      * @param params configuration parameters (see parameters.hpp)
      * @param eng random number generation engine (boost)
      */
-    MCMCModel(size_t dim, Parameters params, randEngine& eng);
+    MCMCModel(size_t dim, Parameters& params, randEngine& eng);
 
     virtual ~MCMCModel();
 

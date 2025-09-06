@@ -90,7 +90,7 @@ namespace bayesopt
   class KernelModel
   {
   public:
-    KernelModel(size_t dim, Parameters parameters);
+    KernelModel(size_t dim, Parameters& parameters);
     virtual ~KernelModel() {};
 
     Kernel* getKernel();

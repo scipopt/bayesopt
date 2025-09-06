@@ -49,7 +49,7 @@ namespace bayesopt {
      * Constructor
      * @param params set of parameters (see parameters.hpp)
      */
-    EmpiricalBayes(size_t dim, Parameters params, randEngine& eng);
+    EmpiricalBayes(size_t dim, Parameters& params, randEngine& eng);
 
     /** 
      * Default destructor

@@ -199,7 +199,7 @@ namespace bayesopt {
     void saveResponse(double yPoint, bool clear);
 
   protected:
-    Parameters mParameters;                    ///< Configuration parameters
+    Parameters mParameters;                     ///< Configuration parameters
     size_t mDims;                                   ///< Number of dimensions
     size_t mCurrentIter;                        ///< Current iteration number
     boost::mt19937 mEngine;                      ///< Random number generator

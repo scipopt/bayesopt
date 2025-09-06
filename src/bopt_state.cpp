@@ -36,7 +36,7 @@ namespace bayesopt
         loadOrSave(fp);
     }
     
-    bool BOptState::loadFromFile(std::string filename, Parameters &program_params){
+    bool BOptState::loadFromFile(std::string filename, Parameters& program_params){
         utils::FileParser fp(filename);
         if(!fp.fileExists()){
             return false;

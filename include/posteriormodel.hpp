@@ -43,14 +43,14 @@ namespace bayesopt {
   class PosteriorModel
   {
   public:
-    static PosteriorModel* create(size_t dim, Parameters params, 
+    static PosteriorModel* create(size_t dim, Parameters& params,
 				  randEngine& eng);
 
     /** 
      * Constructor
      * @param params set of parameters (see parameters.hpp)
      */
-    PosteriorModel(size_t dim, Parameters params, randEngine& eng);
+    PosteriorModel(size_t dim, Parameters& params, randEngine& eng);
 
     /** 
      * Default destructor
@@ -88,7 +88,7 @@ namespace bayesopt {
 
 
   protected:
-    Parameters mParameters;                     ///< Configuration parameters
+    Parameters& mParameters;                     ///< Configuration parameters
     size_t mDims;                                    ///< Number of dimensions
     Dataset mData;                ///< Dataset (x-> inputs, y-> labels/output)
     MeanModel mMean;

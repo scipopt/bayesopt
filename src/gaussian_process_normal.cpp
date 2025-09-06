@@ -34,7 +34,7 @@ namespace bayesopt
   namespace ublas = boost::numeric::ublas; 
   
   GaussianProcessNormal::GaussianProcessNormal(size_t dim, 
-					       Parameters params, 
+					       Parameters& params,
 					       const Dataset& data, 
 					       MeanModel& mean,
 					       randEngine& eng):

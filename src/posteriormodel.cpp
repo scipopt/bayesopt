@@ -29,7 +29,7 @@
 namespace bayesopt
 {
 
-  PosteriorModel* PosteriorModel::create(size_t dim, Parameters params, randEngine& eng)
+  PosteriorModel* PosteriorModel::create(size_t dim, Parameters& params, randEngine& eng)
   {
     switch (params.l_type)
       {
@@ -43,7 +43,7 @@ namespace bayesopt
       }
   };
 
-  PosteriorModel::PosteriorModel(size_t dim, Parameters parameters, 
+  PosteriorModel::PosteriorModel(size_t dim, Parameters& parameters,
 				 randEngine& eng):
     mParameters(parameters), mDims(dim), mMean(dim, parameters)
   {} 

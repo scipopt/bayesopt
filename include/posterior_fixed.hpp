@@ -49,7 +49,7 @@ namespace bayesopt {
      * Constructor
      * @param params set of parameters (see parameters.hpp)
      */
-    PosteriorFixed(size_t dim, Parameters params, randEngine& eng);
+    PosteriorFixed(size_t dim, Parameters& params, randEngine& eng);
 
     /** 
      * Default destructor

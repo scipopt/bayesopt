@@ -27,7 +27,7 @@ namespace bayesopt
 {
 
 
-  PosteriorFixed::PosteriorFixed(size_t dim, Parameters parameters, 
+  PosteriorFixed::PosteriorFixed(size_t dim, Parameters& parameters,
 				 randEngine& eng):
     PosteriorModel(dim,parameters,eng)
   {

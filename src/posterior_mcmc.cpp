@@ -24,7 +24,7 @@
 
 namespace bayesopt
 {
-  MCMCModel::MCMCModel(size_t dim, Parameters parameters, 
+  MCMCModel::MCMCModel(size_t dim, Parameters& parameters,
 		       randEngine& eng):
     PosteriorModel(dim,parameters,eng), nParticles(10)
   {

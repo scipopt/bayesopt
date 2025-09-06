@@ -57,7 +57,7 @@ namespace bayesopt
 
   //////////////////////////////////////////////////////////////////////
 
-  MeanModel::MeanModel(size_t dim, Parameters parameters)
+  MeanModel::MeanModel(size_t dim, Parameters& parameters)
   {
     setMean(parameters.mean,dim);
   }
