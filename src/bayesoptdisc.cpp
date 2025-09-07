@@ -91,24 +91,31 @@ namespace bayesopt
     //   }
   }
 
-  //In this case, it is the trivial function
-  vectord DiscreteModel::remapPoint(const vectord& x)
-  { return x; }
-
-  void DiscreteModel::generateInitialPoints(matrixd& xPoints)
+  // In this case, it is the trivial function
+  vectord DiscreteModel::mapPoint(const vectord& x)
   {
+    return x;
+  }
 
+  // In this case, it is the trivial function
+  vectord DiscreteModel::remapPoint(const vectord& x)
+  {
+    return x;
+  }
+
+  void DiscreteModel::generateInitialPoints(vecOfvec& xPoints)
+  {
     vecOfvec perms = mInputSet;
-    
+
     // By using random permutations, we guarantee that 
     // the same point is not selected twice
-    utils::randomPerms(perms,mEngine);
-    
+    utils::randomPerms(perms, mEngine);
+
     // vectord xPoint(mInputSet[0].size());
-    for(size_t i = 0; i < xPoints.size1(); i++)
+    for( size_t i = 0; i < xPoints.size(); ++i )
     {
-        const vectord xP = perms[i];
-        row(xPoints,i) = xP;
+      const vectord xP = perms[i];
+      xPoints[i] = xP;
     }
   }
 

@@ -83,16 +83,15 @@ namespace bayesopt {
      */
     virtual ~BayesOptBase();
 
-    /** 
+    /**
      * \brief Function that defines the actual function to be optimized.
      * This function must be modified (overriden) according to the
      * specific problem.
      *
-     * @param query point to be evaluated. 
+     * @param query point to be evaluated.
      * @return value of the function at the point evaluated.
      */
-    virtual double evaluateSample( const vectord &query ) = 0;
-    
+    virtual double evaluateSample(vectord& query) = 0;
 
     /** 
      * \brief This function checks if the query is valid or not. It can
@@ -172,10 +171,12 @@ namespace bayesopt {
     /** Get optimal points in the inner space (e.g.: [0-1] hypercube) */
     vecOfvec getPointsAtMinimum();
 
-    /** Wrapper for the target function adding any preprocessing or
-	constraint. It also maps the box constrains to the [0,1]
-	hypercube if applicable. */
-    double evaluateSampleInternal( const vectord &query );
+    /**
+     * Wrapper for the target function adding any preprocessing or
+     * constraint. It also maps the box constrains to the [0,1]
+     * hypercube if applicable.
+     */
+    double evaluateSampleInternal(vectord& query);
 
     /** Sample a single point in the input space. Used for epsilon
 	greedy exploration. */
@@ -187,13 +188,15 @@ namespace bayesopt {
      * @param xOpt optimal point
      */
     virtual void findOptimal(vectord &xOpt) = 0;
-  
-    /** Remap the point x to the original space (e.g.:
-	unnormalization) */
+
+    /** Map the point x to the transformed space (e.g.: normalization) */
+    virtual vectord mapPoint(const vectord& x) = 0;
+
+    /** Remap the point x to the original space (e.g.: unnormalization) */
     virtual vectord remapPoint(const vectord& x) = 0;
 
     /** Selects the initial set of points to build the surrogate model. */
-    virtual void generateInitialPoints(matrixd& xPoints) = 0;
+    virtual void generateInitialPoints(vecOfvec& xPoints) = 0;
 
     /** 
      * \brief Print data for every step according to the verbose level
@@ -204,9 +207,9 @@ namespace bayesopt {
      */
     void plotStepData(size_t iteration, const vectord& xNext,
 			      double yNext);
-        
+
     /** Eases the process of saving a state during initial samples */
-    void saveInitialSamples(matrixd xPoints);
+    void saveInitialSamples(const vecOfvec& xPoints);
     void saveResponse(double yPoint, bool clear);
 
   protected:

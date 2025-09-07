@@ -38,16 +38,16 @@ namespace bayesopt {
     
       virtual ~BoundingBox(){};
 
-      inline V unnormalizeVector( const V &vin )
+      inline V unnormalizeVector(const V& vin)
       {
-	return ublas_elementwise_prod(vin,mRangeBound) + mLowerBound;
-      };  // unnormalizeVector
+        return ublas_elementwise_prod<V, V>(vin, mRangeBound) + mLowerBound;
+      } // unnormalizeVector
 
-      inline V normalizeVector( const V &vin )
+      inline V normalizeVector(const V& vin)
       {
-	return ublas_elementwise_div(vin - mLowerBound, mRangeBound);
-      }  // normalizeVector
-  
+        return ublas_elementwise_div<V, V>(vin - mLowerBound, mRangeBound);
+      } // normalizeVector
+
     protected:
       V mLowerBound; ///< Lower bound of the input space
       V mRangeBound; ///< Range (up-low) of the input space

@@ -47,16 +47,15 @@ class ExampleQuadratic: public bayesopt::ContinuousModel
   ExampleQuadratic(size_t dim,bayesopt::Parameters param):
     ContinuousModel(dim,param) {}
 
-  double evaluateSample( const vectord &Xi ) 
+  double evaluateSample(vectord& Xi)
   {
     double x[100];
-    for (size_t i = 0; i < Xi.size(); ++i)
-      {
-	x[i] = Xi(i);	
-      }
-    return testFunction(Xi.size(),x,NULL,NULL);
-  };
 
+    for( size_t i = 0; i < Xi.size(); ++i )
+      x[i] = Xi(i);
+
+    return testFunction(Xi.size(), x, NULL, NULL);
+  }
 
   bool checkReachability( const vectord &query )
   { return true; };

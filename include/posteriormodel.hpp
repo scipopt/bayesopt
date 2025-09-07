@@ -71,10 +71,10 @@ namespace bayesopt {
     virtual bool setNextCriterium(const vectord& prevResult) = 0;
     virtual std::string getBestCriteria(vectord& best) = 0;
 
-
     void setSamples(const matrixd &x, const vectord &y);
     void setSamples(const matrixd &x);
     void setSamples(const vectord &y);
+    void setSamples(const vecOfvec& x, const vectord& y);
     void setSample(const vectord &x, double y);
     void addSample(const vectord &x, double y);
     void updateMinMax();

@@ -49,15 +49,15 @@ class ExampleDisc: public bayesopt::DiscreteModel
   ExampleDisc(const vecOfvec & validSet, bayesopt::Parameters param):
     DiscreteModel(validSet,param) {}
 
-  double evaluateSample( const vectord &Xi ) 
+  double evaluateSample(vectord& Xi)
   {
     double x[100];
-    for (size_t i = 0; i < Xi.size(); ++i)
-      {
-	x[i] = Xi(i);	
-      }
-    return testFunction(Xi.size(),x,NULL,NULL);
-  };
+
+    for( size_t i = 0; i < Xi.size(); ++i )
+      x[i] = Xi(i);
+
+    return testFunction(Xi.size(), x, NULL, NULL);
+  }
 
   bool checkReachability( const vectord &query )
   { return true; }; 
@@ -129,20 +129,24 @@ int main(int nargs, char *args[])
   bayes_optimization_disc(n, &testFunction, NULL, xPointsArray, nPoints,
 			  x, fmin, par.generate_bopt_params());
 
-
   // Find the optimal value by brute force
   size_t min = 0;
-  double minvalue = opt.evaluateSample(row(xPoints,min));
-  for(size_t i = 1; i<nPoints; ++i)
+  vectord point = row(xPoints, min);
+  double minvalue = opt.evaluateSample(point);
+  double value;
+
+  for( size_t i = 1; i < nPoints; ++i )
+  {
+    point = row(xPoints, i);
+    value = opt.evaluateSample(point);
+
+    if( minvalue > value )
     {
-      vectord point = row(xPoints,i);  
-      if (opt.evaluateSample(point) < minvalue)
-	{
-	  min = i;
-	  minvalue = opt.evaluateSample(row(xPoints,min));
-	  std::cout << i << "," << minvalue << std::endl;
-	}
+      min = i;
+      minvalue = value;
+      std::cout << i << "," << minvalue << std::endl;
     }
+  }
 
   std::cout << "Final result C++: " << result << " | Value:" << opt.evaluateSample(result) << std::endl;
   std::cout << "Final result C: ["<< n << "](";

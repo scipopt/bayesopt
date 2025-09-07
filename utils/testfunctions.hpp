@@ -39,17 +39,18 @@ public:
   ExampleOneD(bayesopt::Parameters par):
     ContinuousModel(1,par) {}
 
-  double evaluateSample(const vectord& xin)
+  double evaluateSample(vectord& xin)
   {
-    if (xin.size() != 1)
-      {
-	std::cout << "WARNING: This only works for 1D inputs." << std::endl
-		  << "WARNING: Using only first component." << std::endl;
-      }
+    if( xin.size() != 1 )
+    {
+      std::cout << "WARNING: This only works for 1D inputs." << std::endl
+                << "WARNING: Using only first component." << std::endl;
+    }
 
     double x = xin(0);
-    return (x-0.3)*(x-0.3) + sin(20*x)*0.2;
-  };
+
+    return (x - 0.3) * (x - 0.3) + sin(20 * x) * 0.2;
+  }
 
   bool checkReachability(const vectord &query)
   {return true;};
@@ -68,17 +69,17 @@ public:
   BraninNormalized(bayesopt::Parameters par):
     ContinuousModel(2,par) {}
 
-  double evaluateSample( const vectord& xin)
+  double evaluateSample(vectord& xin)
   {
-     if (xin.size() != 2)
-      {
-	std::cout << "WARNING: This only works for 2D inputs." << std::endl
-		  << "WARNING: Using only first two components." << std::endl;
-      }
+    if( xin.size() != 2 )
+    {
+      std::cout << "WARNING: This only works for 2D inputs." << std::endl
+                << "WARNING: Using only first two components." << std::endl;
+    }
 
     double x = xin(0) * 15 - 5;
     double y = xin(1) * 15;
-    
+
     return branin(x,y);
   }
 
@@ -118,20 +119,21 @@ public:
   ExampleCamelback(bayesopt::Parameters par):
     ContinuousModel(2,par) {}
 
-  double evaluateSample( const vectord& x)
+  double evaluateSample(vectord& x)
   {
-     if (x.size() != 2)
-      {
-	std::cout << "WARNING: This only works for 2D inputs." << std::endl
-		  << "WARNING: Using only first two components." << std::endl;
-      }
-     double x1_2 = x(0)*x(0);
-     double x2_2 = x(1)*x(1);
+    if( x.size() != 2 )
+    {
+      std::cout << "WARNING: This only works for 2D inputs." << std::endl
+                << "WARNING: Using only first two components." << std::endl;
+    }
 
-     double tmp1 = (4 - 2.1 * x1_2 + (x1_2*x1_2)/3) * x1_2;
-     double tmp2 = x(0)*x(1);
-     double tmp3 = (-4 + 4 * x2_2) * x2_2;
-     return tmp1 + tmp2 + tmp3;
+    double x1_2 = x(0) * x(0);
+    double x2_2 = x(1) * x(1);
+    double tmp1 = (4 - 2.1 * x1_2 + (x1_2 * x1_2) / 3) * x1_2;
+    double tmp2 = x(0) * x(1);
+    double tmp3 = (-4 + 4 * x2_2) * x2_2;
+
+    return tmp1 + tmp2 + tmp3;
   }
 
   bool checkReachability(const vectord &query)
@@ -173,21 +175,25 @@ public:
       0.4047, 0.8828, 0.8732, 0.5743, 0.1091, 0.0381;
   }
 
-  double evaluateSample( const vectord& xin)
+  double evaluateSample(vectord& xin)
   {
     double y = 0.0;
-    for(size_t i=0; i<4; ++i)
+
+    for( size_t i = 0; i < 4; ++i )
+    {
+      double sum = 0.0;
+
+      for( size_t j = 0; j < 6; ++j )
       {
-	double sum = 0.0;
-	for(size_t j=0;j<6; ++j)
-	  {
-	    double val = xin(j)-mP(i,j);
-	    sum -= mA(i,j)*val*val;
-	  }
-	y -= mC(i)*std::exp(sum);
+        double val = xin(j) - mP(i, j);
+        sum -= mA(i, j) * val * val;
       }
+
+      y -= mC(i) * std::exp(sum);
+    }
+
     return y;
-  };
+  }
 
   bool checkReachability(const vectord &query)
   {return true;};

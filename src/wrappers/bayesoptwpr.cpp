@@ -44,11 +44,12 @@ class CContinuousModel: public bayesopt::ContinuousModel
 
   virtual ~CContinuousModel(){};
 
-  double evaluateSample( const vectord &Xi ) 
+  double evaluateSample(vectord& Xi)
   {
     int n = static_cast<int>(Xi.size());
-    return  mF(n,&Xi[0],NULL,mOtherData);
-  };
+
+    return mF(n, &Xi[0], NULL, mOtherData);
+  }
 
   void set_eval_funct(eval_func f)
   {  mF = f; }
@@ -77,11 +78,12 @@ class CDiscreteModel: public bayesopt::DiscreteModel
     DiscreteModel(categories, params)
   {}; 
 
-  double evaluateSample( const vectord &Xi ) 
+  double evaluateSample(vectord& Xi)
   {
     int n = static_cast<int>(Xi.size());
-    return  mF(n,&Xi[0],NULL,mOtherData);
-  };
+
+    return mF(n, &Xi[0], NULL, mOtherData);
+  }
 
   void set_eval_funct(eval_func f)
   {  mF = f; }

@@ -69,6 +69,16 @@ namespace bayesopt
     mData.setSamples(y);  
   }
 
+  void PosteriorModel::setSamples(const vecOfvec& x, const vectord& y)
+  {
+    matrixd xx(x.size(), x.empty() ? 0 : x[0].size());
+
+    for( size_t i = 0; i < x.size(); ++i )
+      row(xx, i) = x[i];
+
+    mData.setSamples(xx, y);
+    mMean.setPoints(mData.mX);
+  }
 
   void PosteriorModel::setSample(const vectord &x, double y)
   { 

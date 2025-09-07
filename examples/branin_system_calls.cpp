@@ -40,27 +40,27 @@ public:
   SystemCallsBranin(bayesopt::Parameters par):
     ContinuousModel(2,par) {}
 
-  double evaluateSample( const vectord& xin)
+  double evaluateSample(vectord& xin)
   {
-     if (xin.size() != 2)
-      {
-	std::cout << "WARNING: This only works for 2D inputs." << std::endl
-		  << "WARNING: Using only first two components." << std::endl;
-      }
+    if( xin.size() != 2 )
+    {
+      std::cout << "WARNING: This only works for 2D inputs." << std::endl
+                << "WARNING: Using only first two components." << std::endl;
+    }
 
     float y = -1;
     double x1 = xin(0);
     double x2 = xin(1);
-    
+
     bayesopt::utils::FileParser fp("results.txt");
-    std::string call = "python ../examples/standalone_calls/eval_branin.py " + 
+    std::string call = "python ../examples/standalone_calls/eval_branin.py " +
       fp.to_string(x1) + " " + fp.to_string(x2);
     int ret = system(call.c_str());
-    
+
     fp.openInput();
     fp.read("y",y);
     fp.close();
-    
+
     return y;
   }
 

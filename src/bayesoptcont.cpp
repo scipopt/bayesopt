@@ -126,13 +126,23 @@ namespace bayesopt  {
       }
   };
 
+  vectord ContinuousModel::mapPoint(const vectord& x)
+  {
+    return mBB->normalizeVector(x);
+  }
+
   vectord ContinuousModel::remapPoint(const vectord& x)
   {
     return mBB->unnormalizeVector(x);
   }
 
-  void ContinuousModel::generateInitialPoints(matrixd& xPoints)
-  {   
-    utils::samplePoints(xPoints,mParameters.init_method,mEngine);
+  void ContinuousModel::generateInitialPoints(vecOfvec& xPoints)
+  {
+    matrixd xPointsMatrix(xPoints.size(), xPoints.empty() ? 0 : xPoints[0].size());
+
+    utils::samplePoints(xPointsMatrix, mParameters.init_method, mEngine);
+
+    for( size_t i = 0; i < xPoints.size(); ++i )
+      xPoints[i] = row(xPointsMatrix, i);
   }
 }  //namespace bayesopt

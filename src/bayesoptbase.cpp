@@ -184,25 +184,25 @@ namespace bayesopt
     size_t nSamples = mParameters.n_init_samples;
 
     // Generate xPoints for initial sampling
-    matrixd xPoints(nSamples,mDims);
-    vectord yPoints(nSamples,0);
+    vecOfvec xPoints(nSamples, vectord(mDims));
+    vectord yPoints(nSamples, 0);
 
-    // Save generated xPoints before its evaluation
+    // Save generated xPoints after their evaluation
     generateInitialPoints(xPoints);
+
+    // Save after evaluations
+    for( size_t i = 0; i < yPoints.size(); ++i )
+      yPoints[i] = evaluateSampleInternal(xPoints[i]);
+
     saveInitialSamples(xPoints);
-    mModel->setSamples(xPoints);
-    
-    // Save on each evaluation for safety reasons
-    for(size_t i=0; i<yPoints.size(); i++)
-      {
-        yPoints[i] = evaluateSampleInternal(row(xPoints,i));
-	//We clear the vector in the first iteration
-        saveResponse(yPoints[i], i==0);
-      }
-    
+
+    // We clear the vector in the first iteration
+    for( size_t i = 0; i < yPoints.size(); ++i )
+      saveResponse(yPoints[i], i == 0);
+
     // Put samples into model
-    mModel->setSamples(yPoints);
- 
+    mModel->setSamples(xPoints, yPoints);
+
     if(mParameters.verbose_level > 0)
       {
         mModel->plotDataset(logDEBUG);
@@ -255,27 +255,27 @@ namespace bayesopt
     
     // Posterior surrogate model
     mModel.reset(PosteriorModel::create(mDims, mParameters, mEngine));
-    
-    // Load samples, putting mX vecOfvec into a matrixd
-    matrixd xPoints(state.mX.size(),state.mX[0].size());
-    vectord yPoints(state.mX.size(),0);
-    for(size_t i=0; i<state.mX.size(); i++)
+
+    // Load samples
+    vecOfvec xPoints(state.mX.size(), vectord(state.mX[0].size()));
+    vectord yPoints(state.mX.size(), 0);
+
+    for( size_t i = 0; i < state.mX.size(); ++i )
+    {
+      xPoints[i] = state.mX[i];
+
+      if( i < state.mY.size() )
+        yPoints[i] = state.mY[i];
+      else
       {
-        row(xPoints, i) = state.mX[i];
-        if(i < state.mY.size())
-	  {
-            yPoints[i] = state.mY[i];
-	  }
-	else
-	  {
-	    // Generate remaining initial samples saving in each evaluation	    
-	    yPoints[i] = evaluateSampleInternal(row(xPoints,i));
-	    saveResponse(yPoints[i], false);
-	  }
+        // Generate remaining initial samples saving in each evaluation
+        yPoints[i] = evaluateSampleInternal(xPoints[i]);
+        saveResponse(yPoints[i], false);
       }
-    
+    }
+
     // Set loaded and generated samples
-    mModel->setSamples(xPoints,yPoints);
+    mModel->setSamples(xPoints, yPoints);
         
     if(mParameters.verbose_level > 0)
     {
@@ -335,20 +335,18 @@ namespace bayesopt
   vecOfvec BayesOptBase::getPointsAtMinimum()
   { return mModel->getPointsAtMinimum(); };
 
-  double BayesOptBase::evaluateSampleInternal( const vectord &query )
-  { 
-    const double yNext = evaluateSample(remapPoint(query)); 
-    if (yNext == HUGE_VAL)
-      {
-	throw std::runtime_error("Function evaluation out of range");
-      }
+  double BayesOptBase::evaluateSampleInternal(vectord& query)
+  {
+    vectord queryexternal(remapPoint(query));
+    const double yNext = evaluateSample(queryexternal);
+
+    if( yNext == HUGE_VAL )
+      throw std::runtime_error("Function evaluation out of range");
+
+    query = mapPoint(queryexternal);
     return yNext;
-  }; 
+  };
 
-
-
-  
-  
   void BayesOptBase::plotStepData(size_t iteration, const vectord& xNext,
 				     double yNext)
   {
@@ -365,22 +363,22 @@ namespace bayesopt
   } //plotStepData
 
 
-  void BayesOptBase::saveInitialSamples(matrixd xPoints)
+  void BayesOptBase::saveInitialSamples(const vecOfvec& xPoints)
   {
     // Save state if required
-    if(mParameters.load_save_flag == 2 || mParameters.load_save_flag == 3)
-      {
-        BOptState state;
-        saveOptimization(state);
-        
-        // Overwrite the state with initial samples so far
-        state.mX.clear();
-        for(size_t i=0; i<xPoints.size1(); i++)
-	  {
-            state.mX.push_back(row(xPoints,i));
-	  }
-        state.saveToFile(mParameters.save_filename);
-      }
+    if( mParameters.load_save_flag == 2 || mParameters.load_save_flag == 3 )
+    {
+      BOptState state;
+      saveOptimization(state);
+
+      // Overwrite the state with initial samples so far
+      state.mX.clear();
+
+      for( size_t i = 0; i < xPoints.size(); ++i )
+        state.mX.push_back(xPoints[i]);
+
+      state.saveToFile(mParameters.save_filename);
+    }
   }
 
 

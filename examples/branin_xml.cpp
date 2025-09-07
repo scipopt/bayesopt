@@ -108,37 +108,37 @@ public:
   XMLCallsBranin(bayesopt::Parameters par):
     ContinuousModel(2,par) {}
 
-  double evaluateSample( const vectord& xin)
+  double evaluateSample(vectord& xin)
   {
-     if (xin.size() != 2)
-      {
-	std::cout << "WARNING: This only works for 2D inputs." << std::endl
-		  << "WARNING: Using only first two components." << std::endl;
-      }
+    if( xin.size() != 2 )
+    {
+      std::cout << "WARNING: This only works for 2D inputs." << std::endl
+                << "WARNING: Using only first two components." << std::endl;
+    }
 
     float y = -1;
     double x1 = xin(0);
     double x2 = xin(1);
-        
+
     // Create XML from template
     std::string template_filename("../examples/standalone_calls/problem_template.xml");
     std::string template_prefix("XXXX_");
     TemplateWritter tw(template_filename, template_prefix); 
     std::string created_filename("../examples/standalone_calls/created_file.xml");
     tw.createFile(created_filename, xin);
-    
+
     // Results filename
     std::string results_filename("../examples/standalone_calls/results.txt");
 
     // Call python script
     std::string call = "python ../examples/standalone_calls/eval_branin_xml.py " + created_filename + " " + results_filename;
     system(call.c_str());
-    
+
     // TODO (Javier): Change results to XML format
     bayesopt::utils::FileParser fp(results_filename.c_str());
     fp.openInput();
     fp.read("y",y);
-    
+
     return y;
   }
 

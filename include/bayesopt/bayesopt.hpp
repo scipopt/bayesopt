@@ -110,12 +110,14 @@ namespace bayesopt  {
      */
     void findOptimal(vectord &xOpt);
 
-    /** Remap the point x to the original space (e.g.:
-	unnormalization) */
+    /** Map the point x to the transformed space (e.g.: normalization) */
+    vectord mapPoint(const vectord& x);
+
+    /** Remap the point x to the original space (e.g.: unnormalization) */
     vectord remapPoint(const vectord& x);
 
     /** Selects the initial set of points to build the surrogate model. */
-    void generateInitialPoints(matrixd& xPoints);
+    void generateInitialPoints(vecOfvec& xPoints);
 
   private:
     boost::scoped_ptr<utils::BoundingBox<vectord> > mBB;      ///< Bounding Box (input space limits)
@@ -195,11 +197,14 @@ namespace bayesopt  {
      */
     void findOptimal(vectord &xOpt);
 
-    /** Remap the point x to the original space  */
+    /** Map the point x to the transformed space */
+    vectord mapPoint(const vectord& x);
+
+    /** Remap the point x to the original space */
     vectord remapPoint(const vectord& x);
 
     /** Selects the initial set of points to build the surrogate model. */
-    void generateInitialPoints(matrixd& xPoints);
+    void generateInitialPoints(vecOfvec& xPoints);
 
   private:
     vecOfvec mInputSet;               ///< List of input points
