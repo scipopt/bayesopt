@@ -51,8 +51,8 @@ namespace bayesopt
   void MCMCModel::updateHyperParameters()
   {
     // We take the initial point as the last particle from previous update.
-    size_t last = mGP.size()-1;
-    vectord lastTheta = mGP[last].getHyperParameters();
+    size_t last = mGP.size() - 1;
+    vectord lastTheta(mGP[last].getHyperParameters());
 
     FILE_LOG(logDEBUG) << "Initial kernel parameters: " << lastTheta;
     kSampler->run(lastTheta);

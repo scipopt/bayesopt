@@ -48,17 +48,32 @@ namespace bayesopt
 			      void *func_data);
 
 
-  double run_nlopt(nlopt::algorithm algo, eval_func fpointer,
-		   vectord& Xnext, int maxf, const std::vector<double>& vd, 
-		   const std::vector<double>& vu, void* objPointer)
+  double run_nlopt(nlopt::algorithm algo, eval_func fpointer, vectord& Xnext, int maxf, const std::vector<double>& vd,
+                   const std::vector<double>& vu, void* objPointer, bool warm)
   {
     double fmin = 0.0;
     size_t n = Xnext.size(); 
     nlopt::opt opt (algo,n);
 
     std::vector<double> xstd(n);
-    opt.set_lower_bounds(vd);
-    opt.set_upper_bounds(vu);
+    std::vector<double> xd(vd);
+    std::vector<double> xu(vu);
+
+    if( warm )
+    {
+      for( size_t i = 0; i < n; ++i )
+      {
+        const double shift = 2 * Xnext[i] - (xd[i] + xu[i]);
+
+        if( shift > 0.0 )
+          xd[i] = std::min(xd[i] + shift, 0.5 * (xd[i] + xu[i]));
+        else if( shift < 0.0 )
+          xu[i] = std::max(xu[i] + shift, 0.5 * (xd[i] + xu[i]));
+      }
+    }
+
+    opt.set_lower_bounds(xd);
+    opt.set_upper_bounds(xu);
     opt.set_min_objective(fpointer, objPointer);
     opt.set_maxeval(maxf);
     
@@ -67,8 +82,10 @@ namespace bayesopt
     opt.set_ftol_rel(1e-12);	
     opt.set_ftol_abs(1e-12);
 
-    std::copy(Xnext.begin(),Xnext.end(),xstd.begin());
-      
+    std::copy(Xnext.begin(), Xnext.end(), xstd.begin());
+
+    double fcur = fpointer(n, xstd.data(), NULL, objPointer);
+
     try 
       { 
 	opt.optimize(xstd, fmin);  
@@ -79,8 +96,13 @@ namespace bayesopt
 			   << "In general, this can be ignored.";
       }
 
-    std::copy(xstd.begin(),xstd.end(),Xnext.begin());
-    return fmin;
+    if( fcur < fmin )
+      return fcur;
+    else
+    {
+      std::copy(xstd.begin(), xstd.end(), Xnext.begin());
+      return fmin;
+    }
   }
 
 
@@ -106,7 +128,7 @@ namespace bayesopt
     if(rgbobj != NULL) delete rgbobj;
   }
 
-  double NLOPT_Optimization::localTrialAround(vectord& Xnext)
+  double NLOPT_Optimization::localTrialAround(vectord& Xnext, bool warm)
   {
     assert(mDown.size() == Xnext.size());
     assert(mUp.size() == Xnext.size());
@@ -137,17 +159,14 @@ namespace bayesopt
 
     vectord start = Xnext;
 
-    double fmin = run_nlopt(algo,fpointer,Xnext,nIter,
-			    mDown,mUp,objPointer);
+    double fmin = run_nlopt(algo, fpointer, Xnext, nIter, mDown, mUp, objPointer, warm);
+    FILE_LOG(logDEBUG) << "Near trial " << nIter << "|" << start << "-> " << Xnext << " f() ->" << fmin;
 
-    FILE_LOG(logDEBUG) << "Near trial " << nIter << "|" 
-		       << start << "-> " << Xnext << " f() ->" << fmin;
-    
     return fmin;
 
   }
 
-  double NLOPT_Optimization::run(vectord &Xnext)
+  double NLOPT_Optimization::run(vectord &Xnext, bool warm)
   {   
     assert(mDown.size() == Xnext.size());
     assert(mUp.size() == Xnext.size());
@@ -161,18 +180,9 @@ namespace bayesopt
     int maxf2 = 0;    // For a second pass
     const double coef_local = 0.1;
     //int ierror;
-
-    // If Xnext is outside the bounding box, maybe it is undefined
-    for (size_t i = 0; i < n; ++i) 
-      {
-	if (Xnext(i) < mDown[i] || Xnext(i) > mUp[i])
-	  {
-	    Xnext(i)=(mDown[i]+mUp[i])/2.0;
-	  }
-      }
-
     //    nlopt_opt opt;
     nlopt::algorithm algo;
+
     switch(alg)
       {
       case DIRECT: // Pure global. No gradient
@@ -208,14 +218,14 @@ namespace bayesopt
 				    "(gradient/no gradient)");
       }
 
-    fmin = run_nlopt(algo, fpointer, Xnext, maxf1, mDown, mUp, objPointer);
+    fmin = run_nlopt(algo, fpointer, Xnext, maxf1, mDown, mUp, objPointer, warm);
     FILE_LOG(logDEBUG) << "1st opt " << maxf1 << "-> " << Xnext << " f() ->" << fmin;
 
     if( maxf2 )
     {
       // BOBYQA may fail in this point. Could it be that EI is not twice differentiable?
       // fmin = run_nlopt(nlopt::LN_BOBYQA, fpointer, Xnext, maxf2, mDown, mUp, objPointer);
-      fmin = run_nlopt(nlopt::LN_COBYLA, fpointer, Xnext, maxf2, mDown, mUp, objPointer);
+      fmin = run_nlopt(nlopt::LN_COBYLA, fpointer, Xnext, maxf2, mDown, mUp, objPointer, warm);
       FILE_LOG(logDEBUG) << "2nd opt " << maxf2 << "-> " << Xnext << " f() ->" << fmin;
     }
 

@@ -105,18 +105,21 @@ namespace bayesopt
 
   void DiscreteModel::generateInitialPoints(vecOfvec& xPoints)
   {
-    vecOfvec perms = mInputSet;
+    assert(xPoints.size() <= mInputSet.size());
+    if( xPoints.empty() )
+      return;
+
+    vecOfvec perms(mInputSet.begin() + 1, mInputSet.end());
 
     // By using random permutations, we guarantee that 
     // the same point is not selected twice
     utils::randomPerms(perms, mEngine);
 
     // vectord xPoint(mInputSet[0].size());
-    for( size_t i = 0; i < xPoints.size(); ++i )
-    {
-      const vectord xP = perms[i];
-      xPoints[i] = xP;
-    }
+    xPoints[0] = mInputSet[0];
+
+    for( size_t i = 1; i < xPoints.size(); ++i )
+      xPoints[i] = perms[i - 1];
   }
 
 }  // namespace bayesopt

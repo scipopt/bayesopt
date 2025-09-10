@@ -138,11 +138,17 @@ namespace bayesopt  {
 
   void ContinuousModel::generateInitialPoints(vecOfvec& xPoints)
   {
-    matrixd xPointsMatrix(xPoints.size(), xPoints.empty() ? 0 : xPoints[0].size());
+    if( xPoints.empty() )
+      return;
+
+    matrixd xPointsMatrix(xPoints.size() - 1, xPoints[0].size());
 
     utils::samplePoints(xPointsMatrix, mParameters.init_method, mEngine);
 
-    for( size_t i = 0; i < xPoints.size(); ++i )
-      xPoints[i] = row(xPointsMatrix, i);
+    for( size_t j = 0; j < xPoints[0].size(); ++j )
+      xPoints[0][j] = 0.5;
+
+    for( size_t i = 1; i < xPoints.size(); ++i )
+      xPoints[i] = row(xPointsMatrix, i - 1);
   }
 }  //namespace bayesopt

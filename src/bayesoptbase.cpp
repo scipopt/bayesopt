@@ -419,7 +419,7 @@ namespace bayesopt
 	  }
       }
 
-    vectord Xnext(mDims);    
+    vectord Xnext(getPointAtMinimum());
 
     // GP-Hedge and related algorithms
     if (mModel->criteriaRequiresComparison())

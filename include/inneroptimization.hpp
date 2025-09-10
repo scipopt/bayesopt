@@ -64,17 +64,19 @@ namespace bayesopt {
     /** Launch the inner optimization algorithm
      *
      * @param Xnext input: initial guess, output: result
+     * @param warm whether to warmstart
      * @return minimum value
      */
-    double run(vectord &Xnext);
+    double run(vectord &Xnext, bool warm = true);
 
     /** 
      * Try some local optimization around a point
      * 
      * @param Xnext input: initial guess, output: result
+     * @param warm whether to warmstart
      * @return minimum value
      */
-    double localTrialAround(vectord& Xnext);
+    double localTrialAround(vectord& Xnext, bool warm = true);
 
     /** 
      * Wrapper of inner optimization to be evaluated by NLOPT
