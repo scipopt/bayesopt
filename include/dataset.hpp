@@ -62,6 +62,7 @@ namespace bayesopt
     vecOfvec mX;                                         ///< Data inputs
     vectord mY;                                          ///< Data values
     size_t mMinIndex, mMaxIndex;                         ///< Data optima
+    vectori indices;                                     ///< Data orders
   };
 
 

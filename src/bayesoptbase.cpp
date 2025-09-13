@@ -137,6 +137,8 @@ namespace bayesopt
           }
       }
 
+    double expectation = getPrediction(xNext)->getMean();
+
     mModel->addSample(xNext,yNext);
 
     // Update surrogate model
@@ -155,7 +157,7 @@ namespace bayesopt
 
     mModel->updateMinMax();
 
-    plotStepData(mCurrentIter,xNext,yNext);
+    plotStepData(mCurrentIter, xNext, yNext, expectation);
     mModel->updateCriteria(xNext);
     mCurrentIter++;
     
@@ -231,6 +233,16 @@ namespace bayesopt
       result = remapPoint(result);
 
     return results;
+  }
+
+  size_t BayesOptBase::getBestIndex()
+  {
+    return mModel->getData()->mMinIndex;
+  }
+
+  vectori BayesOptBase::getBestIndices()
+  {
+    return mModel->getData()->indices;
   }
 
   // SAVE-RESTORE INTERFACE
@@ -347,19 +359,24 @@ namespace bayesopt
     return yNext;
   };
 
-  void BayesOptBase::plotStepData(size_t iteration, const vectord& xNext,
-				     double yNext)
+  void BayesOptBase::plotStepData(size_t iteration, const vectord& xNext, double yNext, double prediction)
   {
-    if(mParameters.verbose_level >0)
-      { 
-	FILE_LOG(logINFO) << "Iteration: " << iteration+1 << " of " 
-			  << mParameters.n_iterations << " | Total samples: " 
-			  << iteration+1+mParameters.n_init_samples ;
-	FILE_LOG(logINFO) << "Query: "         << remapPoint(xNext); ;
-	FILE_LOG(logINFO) << "Query outcome: " << yNext ;
-	FILE_LOG(logINFO) << "Best query: "    << getFinalResult(); 
-	FILE_LOG(logINFO) << "Best outcome: "  << getValueAtMinimum();
-      }
+    if( mParameters.verbose_level > 0 )
+    {
+      vectord best(getPointAtMinimum());
+
+      FILE_LOG(logINFO) << "Iteration: "        << iteration + 1
+                        << " of "               << mParameters.n_iterations
+                        << " | Total samples: " << iteration + 1 + mParameters.n_init_samples
+                        << " | Best sample: "   << getBestIndex() + 1;
+      FILE_LOG(logINFO) << "Query prior:      " << prediction;
+      FILE_LOG(logINFO) << "Query:            " << xNext;
+      FILE_LOG(logINFO) << "Query outcome:    " << yNext;
+      FILE_LOG(logINFO) << "Query posterior:  " << getPrediction(xNext)->getMean();
+      FILE_LOG(logINFO) << "Best query:       " << best;
+      FILE_LOG(logINFO) << "Best outcome:     " << getValueAtMinimum();
+      FILE_LOG(logINFO) << "Best expectation: " << getPrediction(best)->getMean();
+    }
   } //plotStepData
 
 

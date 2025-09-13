@@ -150,6 +150,12 @@ namespace bayesopt {
     /** Once the optimization has been performed, return the optimal points. */
     vecOfvec getFinalResults();
 
+    /** Get index of best sample. */
+    size_t getBestIndex();
+
+    /** Get indices of best samples. */
+    vectori getBestIndices();
+
     /** Saves the current state of the optimization process into a state class. */
     void saveOptimization(BOptState &state);
     
@@ -204,9 +210,9 @@ namespace bayesopt {
      * @param iteration iteration number 
      * @param xNext next point
      * @param yNext function value at next point
+     * @param prediction value expected before
      */
-    void plotStepData(size_t iteration, const vectord& xNext,
-			      double yNext);
+    void plotStepData(size_t iteration, const vectord& xNext, double yNext, double prediction);
 
     /** Eases the process of saving a state during initial samples */
     void saveInitialSamples(const vecOfvec& xPoints);
