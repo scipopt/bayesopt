@@ -91,51 +91,31 @@ namespace bayesopt
   void PosteriorModel::addSample(const vectord &x, double y)
   {  mData.addSample(x,y); mMean.addNewPoint(x);  };
 
-  void PosteriorModel::updateMinMax()
+  void PosteriorModel::getEvaluationMeans(vectord& values, vectori& nvalues)
   {
-    double minmean = std::numeric_limits<double>::infinity();
-    double maxmean = -std::numeric_limits<double>::infinity();
-
-    mData.mMinIndex = 0;
-    mData.mMaxIndex = 0;
-
-    for( size_t index = 0; index < mData.mX.size(); ++index )
-    {
-      const double mean = getPrediction(mData.mX[index])->getMean();
-
-      if( minmean >= mean )
-      {
-        minmean = mean;
-        mData.mMinIndex = index;
-      }
-
-      if( maxmean <= mean )
-      {
-        maxmean = mean;
-        mData.mMaxIndex = index;
-      }
-    }
-  }
-
-  vecOfvec PosteriorModel::getPointsAtMinimum()
-  {
+    values = vectord(mData.mY.size(), 0.0);
+    nvalues = vectori(mData.mY.size(), 0);
     mData.indices.resize(mData.mX.size());
     std::iota(mData.indices.begin(), mData.indices.end(), 0);
     std::sort(mData.indices.begin(), mData.indices.end(), [this](size_t i, size_t j)
     {
-      const double meanfirst = getPrediction(this->mData.mX[i])->getMean();
-      const double meansecond = getPrediction(this->mData.mX[j])->getMean();
-      if( meanfirst != meansecond )
-        return meanfirst < meansecond;
       if( std::lexicographical_compare(this->mData.mX[i].begin(), this->mData.mX[i].end(), this->mData.mX[j].begin(), this->mData.mX[j].end()) )
         return true;
       if( std::lexicographical_compare(this->mData.mX[j].begin(), this->mData.mX[j].end(), this->mData.mX[i].begin(), this->mData.mX[i].end()) )
         return false;
+      if( this->mData.mY[i] != this->mData.mY[j] )
+        return this->mData.mY[i] < this->mData.mY[j];
       return i > j;
     });
 
     size_t beginposition = 0;
     size_t endposition = 1;
+
+    if( !mData.indices.empty() )
+    {
+      values[mData.indices[beginposition]] += mData.mY[mData.indices[beginposition]];
+      ++nvalues[mData.indices[beginposition]];
+    }
 
     while( endposition < mData.indices.size() )
     {
@@ -145,23 +125,65 @@ namespace bayesopt
         mData.indices[beginposition] = mData.indices[endposition];
       }
 
+      values[mData.indices[beginposition]] += mData.mY[mData.indices[endposition]];
+      ++nvalues[mData.indices[beginposition]];
       ++endposition;
     }
 
     mData.indices.resize(beginposition + 1);
-    beginposition = 0;
-    endposition = 1;
 
-    while( beginposition < mData.indices.size() )
+    for( const auto& index : mData.indices )
+      values[index] /= nvalues[index];
+  }
+
+  void PosteriorModel::updateMinMax()
+  {
+    vectord values;
+    vectori nvalues;
+
+    getEvaluationMeans(values, nvalues);
+
+    double minmean = std::numeric_limits<double>::infinity();
+    double maxmean = -std::numeric_limits<double>::infinity();
+    size_t minnumb = 0;
+    size_t maxnumb = 0;
+
+    mData.mMinIndex = 0;
+    mData.mMaxIndex = 0;
+
+    for( const auto& index : mData.indices )
     {
-      if( endposition == mData.indices.size() || getPrediction(mData.mX[mData.indices[beginposition]])->getMean() != getPrediction(mData.mX[mData.indices[endposition]])->getMean() )
+      if( minmean > values[index] || ( minmean == values[index] && ( minnumb < nvalues[index] || ( minnumb == nvalues[index] && mData.mMinIndex < index ) ) ) )
       {
-        std::sort(mData.indices.rend() - endposition - 1, mData.indices.rend() - beginposition - 1);
-        beginposition = endposition;
+        minmean = values[index];
+        minnumb = nvalues[index];
+        mData.mMinIndex = index;
       }
 
-      ++endposition;
+      if( maxmean < values[index] || ( maxmean == values[index] && ( maxnumb < nvalues[index] || ( maxnumb == nvalues[index] && mData.mMaxIndex < index ) ) ) )
+      {
+        maxmean = values[index];
+        maxnumb = nvalues[index];
+        mData.mMaxIndex = index;
+      }
     }
+  }
+
+  vecOfvec PosteriorModel::getPointsAtMinimum()
+  {
+    vectord values;
+    vectori nvalues;
+
+    getEvaluationMeans(values, nvalues);
+
+    std::sort(mData.indices.begin(), mData.indices.end(), [&values, &nvalues](size_t i, size_t j)
+    {
+      if( values[i] != values[j] )
+        return values[i] < values[j];
+      if( nvalues[i] != nvalues[j] )
+        return nvalues[i] > nvalues[j];
+      return i > j;
+    });
     assert(mData.indices.empty() || mData.indices[0] == mData.mMinIndex);
 
     vecOfvec results;
