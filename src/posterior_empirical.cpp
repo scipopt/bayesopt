@@ -51,9 +51,10 @@ namespace bayesopt
 	kOptimizer->setAlgorithm(COMBINED);
 	kOptimizer->setMaxEvals(20*nhp);
       }
-    //Limits in log space
-    kOptimizer->setLimits(svectord(nhp,-6.0),svectord(nhp,1.0));
-  } 
+
+    // limits in log space
+    kOptimizer->setLimits(svectord(nhp, -6.0), svectord(nhp, 0.0));
+  }
 
   EmpiricalBayes::~EmpiricalBayes()
   { } // Default destructor
