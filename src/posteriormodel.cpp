@@ -103,9 +103,7 @@ namespace bayesopt
         return true;
       if( std::lexicographical_compare(this->mData.mX[j].begin(), this->mData.mX[j].end(), this->mData.mX[i].begin(), this->mData.mX[i].end()) )
         return false;
-      if( this->mData.mY[i] != this->mData.mY[j] )
-        return this->mData.mY[i] < this->mData.mY[j];
-      return i > j;
+      return i < j;
     });
 
     size_t beginposition = 0;
