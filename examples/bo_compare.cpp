@@ -44,11 +44,11 @@ int main(int nargs, char *args[])
     {
       par.random_seed = ii;
       BraninNormalized branin(par);
-      vectord result(2);
+      vectord result(2, 0.5);
 
       start_t = clock();
-      branin.initializeOptimization();
-      
+      branin.initializeOptimization(result);
+
       for (size_t jj = 0; jj < par.n_iterations; ++jj)
   	{      
   	  branin.stepOptimization();
@@ -77,16 +77,15 @@ int main(int nargs, char *args[])
     {
       par.random_seed = ii;
       ExampleCamelback camel(par);
-      vectord result(2);
-
+      vectord result(2, 0.0);
       vectord lb(2); lb(0) = -2; lb(1) = -1;
       vectord ub(2); ub(0) =  2; ub(1) = 1;
 
       camel.setBoundingBox(lb,ub);
 
       start_t = clock();
-      camel.initializeOptimization();
-      
+      camel.initializeOptimization(result);
+
       for (size_t jj = 0; jj < par.n_iterations; ++jj)
   	{      
   	  camel.stepOptimization();
@@ -115,11 +114,11 @@ int main(int nargs, char *args[])
     {
       par.random_seed = ii;
       ExampleHartmann6 hart(par);
-      vectord result(6);
+      vectord result(6, 0.5);
 
       start_t = clock();
-      hart.initializeOptimization();
-      
+      hart.initializeOptimization(result);
+
       for (size_t jj = 0; jj < par.n_iterations; ++jj)
   	{      
   	  hart.stepOptimization();
@@ -155,11 +154,11 @@ int main(int nargs, char *args[])
     {
       par.random_seed = ii;
       BraninNormalized branin(par);
-      vectord result(2);
+      vectord result(2, 0.5);
 
       start_t = clock();
-      branin.initializeOptimization();
-      
+      branin.initializeOptimization(result);
+
       for (size_t jj = 0; jj < par.n_iterations; ++jj)
 	{      
 	  branin.stepOptimization();
@@ -187,16 +186,15 @@ int main(int nargs, char *args[])
     {
       par.random_seed = ii;
       ExampleCamelback camel(par);
-      vectord result(2);
-
+      vectord result(2, 0.0);
       vectord lb(2); lb(0) = -2; lb(1) = -1;
       vectord ub(2); ub(0) =  2; ub(1) = 1;
 
       camel.setBoundingBox(lb,ub);
 
       start_t = clock();
-      camel.initializeOptimization();
-      
+      camel.initializeOptimization(result);
+
       for (size_t jj = 0; jj < par.n_iterations; ++jj)
 	{      
 	  camel.stepOptimization();
@@ -224,11 +222,11 @@ int main(int nargs, char *args[])
     {
       par.random_seed = ii;
       ExampleHartmann6 hart(par);
-      vectord result(6);
+      vectord result(6, 0.5);
 
       start_t = clock();
-      hart.initializeOptimization();
-      
+      hart.initializeOptimization(result);
+
       for (size_t jj = 0; jj < par.n_iterations; ++jj)
 	{      
 	  hart.stepOptimization();

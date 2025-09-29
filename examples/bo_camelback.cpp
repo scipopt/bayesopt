@@ -45,15 +45,15 @@ int main(int nargs, char *args[])
  
   
   ExampleCamelback camel(par);
-
+  vectord bestPoint(2, 0.5);
 
   std::ofstream timelog;
   timelog.open("time_camel.log");
   std::clock_t curr_t;
   std::clock_t prev_t = clock();
 
-  camel.initializeOptimization();
-      
+  camel.initializeOptimization(bestPoint);
+
   for (size_t ii = 0; ii < par.n_iterations; ++ii)
     {      
       camel.stepOptimization();

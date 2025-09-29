@@ -45,14 +45,15 @@ int main(int nargs, char *args[])
 
   
   ExampleHartmann6 hart6(par);
+  vectord bestPoint(6, 0.5);
 
   std::ofstream timelog;
   timelog.open("time_hartmann.log");
   std::clock_t curr_t;
   std::clock_t prev_t = clock();
 
-  hart6.initializeOptimization();
-      
+  hart6.initializeOptimization(bestPoint);
+
   for (size_t ii = 0; ii < par.n_iterations; ++ii)
     {      
       hart6.stepOptimization();

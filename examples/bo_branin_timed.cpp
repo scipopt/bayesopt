@@ -45,14 +45,15 @@ int main(int nargs, char *args[])
   }
 
   BraninNormalized branin(par);
+  vectord bestPoint(2, 0.5);
 
   std::ofstream timelog;
   timelog.open("time_branin.log");
   std::clock_t curr_t;
   std::clock_t prev_t = clock();
 
-  branin.initializeOptimization();
-      
+  branin.initializeOptimization(bestPoint);
+
   for (size_t ii = 0; ii < par.n_iterations; ++ii)
     {      
       branin.stepOptimization();

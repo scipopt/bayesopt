@@ -142,7 +142,7 @@ namespace bayesopt {
     void stepOptimization();
 
     /** Initialize the optimization process.  */
-    void initializeOptimization();
+    void initializeOptimization(const vectord& bestPoint);
 
     /** Once the optimization has been performed, return the optimal point. */
     vectord getFinalResult();

@@ -145,9 +145,6 @@ namespace bayesopt  {
 
     utils::samplePoints(xPointsMatrix, mParameters.init_method, mEngine);
 
-    for( size_t j = 0; j < xPoints[0].size(); ++j )
-      xPoints[0][j] = 0.5;
-
     for( size_t i = 1; i < xPoints.size(); ++i )
       xPoints[i] = row(xPointsMatrix, i - 1);
   }

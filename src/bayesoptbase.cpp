@@ -66,34 +66,32 @@ namespace bayesopt
   void BayesOptBase::optimize(vectord &bestPoint)
   {
     assert(mDims == bestPoint.size());
-    
+
     // Restore state from file
-    if(mParameters.load_save_flag == 1 || mParameters.load_save_flag == 3)
+    if( mParameters.load_save_flag == 1 || mParameters.load_save_flag == 3 )
+    {
+      BOptState state;
+      bool load_succeed = state.loadFromFile(mParameters.load_filename, mParameters);
+
+      if( load_succeed )
       {
-        BOptState state;
-        bool load_succeed = state.loadFromFile(mParameters.load_filename, 
-					       mParameters);
-        if(load_succeed)
-	  {
-            restoreOptimization(state);
-            FILE_LOG(logINFO) << "State succesfully restored from file \"" 
-			      << mParameters.load_filename << "\"";
-	  }
-        else
-	  {
-	    // If load not succeed, print info message and then
-	    // initialize a new optimization
-            FILE_LOG(logINFO) << "File \"" << mParameters.load_filename 
-			      << "\" does not exist,"
-			      << " starting a new optimization";
-            initializeOptimization();
-	  }
+        restoreOptimization(state);
+        FILE_LOG(logINFO) << "State succesfully restored from file \"" << mParameters.load_filename
+                          << "\"";
       }
+      else
+      {
+        // If load not succeed, print info message and then initialize a new optimization
+        FILE_LOG(logINFO) << "File \"" << mParameters.load_filename
+                          << "\" does not exist, starting a new optimization";
+        initializeOptimization(bestPoint);
+      }
+    }
     else
-      {
-	// Initialize a new state
-        initializeOptimization();
-      }
+    {
+      // Initialize a new state
+      initializeOptimization(bestPoint);
+    }
 
     reoptimize(bestPoint);
   } // optimize
@@ -171,7 +169,7 @@ namespace bayesopt
   }
   
 
-  void BayesOptBase::initializeOptimization()
+  void BayesOptBase::initializeOptimization(const vectord& bestPoint)
   {
     // Posterior surrogate model
     mModel.reset(PosteriorModel::create(mDims,mParameters,mEngine));
@@ -186,7 +184,7 @@ namespace bayesopt
     size_t nSamples = mParameters.n_init_samples;
 
     // Generate xPoints for initial sampling
-    vecOfvec xPoints(nSamples, vectord(mDims));
+    vecOfvec xPoints(nSamples, mapPoint(bestPoint));
     vectord yPoints(nSamples, 0);
 
     // Save generated xPoints after their evaluation

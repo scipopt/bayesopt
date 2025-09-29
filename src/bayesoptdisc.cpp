@@ -109,14 +109,11 @@ namespace bayesopt
     if( xPoints.empty() )
       return;
 
-    vecOfvec perms(mInputSet.begin() + 1, mInputSet.end());
+    vecOfvec perms(mInputSet.begin(), mInputSet.end());
 
     // By using random permutations, we guarantee that 
     // the same point is not selected twice
     utils::randomPerms(perms, mEngine);
-
-    // vectord xPoint(mInputSet[0].size());
-    xPoints[0] = mInputSet[0];
 
     for( size_t i = 1; i < xPoints.size(); ++i )
       xPoints[i] = perms[i - 1];
