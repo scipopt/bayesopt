@@ -113,10 +113,9 @@ namespace bayesopt {
     { return true; };
 
 
-    /** 
-     * \brief Execute the optimization process of the function defined
-     * in evaluateSample.
-     * 
+    /**
+     * \brief Execute the optimization process for the function defined in evaluateSample.
+     *
      * @see evaluateSample
      * @see checkReachability
      *
@@ -125,8 +124,7 @@ namespace bayesopt {
     void optimize(vectord &bestPoint);
 
     /**
-     * \brief Execute the reoptimization process of the function defined
-     * in evaluateSample.
+     * \brief Execute the reoptimization process for the function defined in evaluateSample.
      *
      * @see evaluateSample
      * @see checkReachability
@@ -135,10 +133,16 @@ namespace bayesopt {
      */
     void reoptimize(vectord& bestPoint);
 
-    /** 
-     * \brief Execute ONE step the optimization process of the
-     * function defined in evaluateSample.  
-     */  
+    /**
+     * \brief Execute ONE step for given input of the optimization process for the function defined in evaluateSample.
+     *
+     * @param xNext internal input point
+     */
+    void addOptimization(vectord& xNext);
+
+    /**
+     * \brief Execute ONE step of the optimization process for the function defined in evaluateSample.
+     */
     void stepOptimization();
 
     /** Initialize the optimization process.  */

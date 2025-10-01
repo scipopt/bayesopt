@@ -106,44 +106,47 @@ namespace bayesopt
     bestPoint = getFinalResult();
   }
 
+  void BayesOptBase::addOptimization(vectord& xNext)
+  {
+    const double yNext = evaluateSampleInternal(xNext);
+    const double expectation = getPrediction(xNext)->getMean();
+
+    mModel->addSample(xNext, yNext);
+
+    // Full surrogate update
+    if( mParameters.n_iter_relearn > 0 && (mCurrentIter + 1) % mParameters.n_iter_relearn == 0 )
+    {
+      mModel->updateHyperParameters();
+      mModel->fitSurrogateModel();
+    }
+    // Incremental surrogate update
+    else
+    {
+      mModel->updateSurrogateModel();
+    }
+
+    mModel->updateMinMax();
+    plotStepData(mCurrentIter, xNext, yNext, expectation);
+    mModel->updateCriteria(xNext);
+    ++mCurrentIter;
+
+    // Save state if required
+    if( mParameters.load_save_flag == 2 || mParameters.load_save_flag == 3 )
+    {
+      BOptState state;
+      saveOptimization(state);
+      state.saveToFile(mParameters.save_filename);
+    }
+  }
+
   void BayesOptBase::stepOptimization()
   {
     // Find what is the next point.
-    vectord xNext = nextPoint(); 
-    double yNext = evaluateSampleInternal(xNext);
-    double expectation = getPrediction(xNext)->getMean();
+    vectord xNext = nextPoint();
 
-    mModel->addSample(xNext,yNext);
-
-    // Update surrogate model
-    bool retrain = ((mParameters.n_iter_relearn > 0) && 
-		    ((mCurrentIter + 1) % mParameters.n_iter_relearn == 0));
-
-    if (retrain)  // Full update
-      {
-        mModel->updateHyperParameters();
-        mModel->fitSurrogateModel();
-      }
-    else          // Incremental update
-      {
-        mModel->updateSurrogateModel();
-      } 
-
-    mModel->updateMinMax();
-
-    plotStepData(mCurrentIter, xNext, yNext, expectation);
-    mModel->updateCriteria(xNext);
-    mCurrentIter++;
-    
-    // Save state if required
-    if(mParameters.load_save_flag == 2 || mParameters.load_save_flag == 3)
-      {
-        BOptState state;
-        saveOptimization(state);
-        state.saveToFile(mParameters.save_filename);
-      }
+    // Add next point.
+    addOptimization(xNext);
   }
-  
 
   void BayesOptBase::initializeOptimization(const vectord& bestPoint)
   {
