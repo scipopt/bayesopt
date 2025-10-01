@@ -78,7 +78,7 @@ namespace bayesopt {
     void setSample(const vectord &x, double y);
     void addSample(const vectord &x, double y);
 
-    void getEvaluationMeans(vectord& values, vectori& nvalues);
+    void storeEvaluationMeans();
     void updateMinMax();
     double getValueAtMinimum();
     vectord getPointAtMinimum();

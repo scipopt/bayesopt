@@ -91,10 +91,10 @@ namespace bayesopt
   void PosteriorModel::addSample(const vectord &x, double y)
   {  mData.addSample(x,y); mMean.addNewPoint(x);  };
 
-  void PosteriorModel::getEvaluationMeans(vectord& values, vectori& nvalues)
+  void PosteriorModel::storeEvaluationMeans()
   {
-    values = vectord(mData.mY.size(), 0.0);
-    nvalues = vectori(mData.mY.size(), 0);
+    mData.values = vectord(mData.mY.size(), 0.0);
+    mData.nvalues = vectori(mData.mY.size(), 0);
     mData.indices.resize(mData.mX.size());
     std::iota(mData.indices.begin(), mData.indices.end(), 0);
     std::sort(mData.indices.begin(), mData.indices.end(), [this](size_t i, size_t j)
@@ -111,8 +111,8 @@ namespace bayesopt
 
     if( !mData.indices.empty() )
     {
-      values[mData.indices[beginposition]] += mData.mY[mData.indices[beginposition]];
-      ++nvalues[mData.indices[beginposition]];
+      mData.values[mData.indices[beginposition]] += mData.mY[mData.indices[beginposition]];
+      ++mData.nvalues[mData.indices[beginposition]];
     }
 
     while( endposition < mData.indices.size() )
@@ -123,23 +123,20 @@ namespace bayesopt
         mData.indices[beginposition] = mData.indices[endposition];
       }
 
-      values[mData.indices[beginposition]] += mData.mY[mData.indices[endposition]];
-      ++nvalues[mData.indices[beginposition]];
+      mData.values[mData.indices[beginposition]] += mData.mY[mData.indices[endposition]];
+      ++mData.nvalues[mData.indices[beginposition]];
       ++endposition;
     }
 
     mData.indices.resize(beginposition + 1);
 
     for( const auto& index : mData.indices )
-      values[index] /= nvalues[index];
+      mData.values[index] /= mData.nvalues[index];
   }
 
   void PosteriorModel::updateMinMax()
   {
-    vectord values;
-    vectori nvalues;
-
-    getEvaluationMeans(values, nvalues);
+    storeEvaluationMeans();
 
     double minmean = std::numeric_limits<double>::infinity();
     double maxmean = -std::numeric_limits<double>::infinity();
@@ -151,17 +148,17 @@ namespace bayesopt
 
     for( const auto& index : mData.indices )
     {
-      if( minmean > values[index] || ( minmean == values[index] && ( minnumb < nvalues[index] || ( minnumb == nvalues[index] && mData.mMinIndex < index ) ) ) )
+      if( minmean > mData.values[index] || ( minmean == mData.values[index] && ( minnumb < mData.nvalues[index] || ( minnumb == mData.nvalues[index] && mData.mMinIndex < index ) ) ) )
       {
-        minmean = values[index];
-        minnumb = nvalues[index];
+        minmean = mData.values[index];
+        minnumb = mData.nvalues[index];
         mData.mMinIndex = index;
       }
 
-      if( maxmean < values[index] || ( maxmean == values[index] && ( maxnumb < nvalues[index] || ( maxnumb == nvalues[index] && mData.mMaxIndex < index ) ) ) )
+      if( maxmean < mData.values[index] || ( maxmean == mData.values[index] && ( maxnumb < mData.nvalues[index] || ( maxnumb == mData.nvalues[index] && mData.mMaxIndex < index ) ) ) )
       {
-        maxmean = values[index];
-        maxnumb = nvalues[index];
+        maxmean = mData.values[index];
+        maxnumb = mData.nvalues[index];
         mData.mMaxIndex = index;
       }
     }
@@ -169,17 +166,14 @@ namespace bayesopt
 
   vecOfvec PosteriorModel::getPointsAtMinimum()
   {
-    vectord values;
-    vectori nvalues;
+    storeEvaluationMeans();
 
-    getEvaluationMeans(values, nvalues);
-
-    std::sort(mData.indices.begin(), mData.indices.end(), [&values, &nvalues](size_t i, size_t j)
+    std::sort(mData.indices.begin(), mData.indices.end(), [this](size_t i, size_t j)
     {
-      if( values[i] != values[j] )
-        return values[i] < values[j];
-      if( nvalues[i] != nvalues[j] )
-        return nvalues[i] > nvalues[j];
+      if( this->mData.values[i] != this->mData.values[j] )
+        return this->mData.values[i] < this->mData.values[j];
+      if( this->mData.nvalues[i] != this->mData.nvalues[j] )
+        return this->mData.nvalues[i] > this->mData.nvalues[j];
       return i > j;
     });
     assert(mData.indices.empty() || mData.indices[0] == mData.mMinIndex);
