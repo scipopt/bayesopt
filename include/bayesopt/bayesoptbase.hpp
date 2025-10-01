@@ -150,11 +150,23 @@ namespace bayesopt {
     /** Once the optimization has been performed, return the optimal points. */
     vecOfvec getFinalResults();
 
+    /** Get internal samples. */
+    vecOfvec getX();
+
+    /** Get internal values. */
+    vectord getY();
+
     /** Get index of best sample. */
     size_t getBestIndex();
 
     /** Get indices of best samples. */
     vectori getBestIndices();
+
+    /** Get averages for representative data indices. */
+    vectord getValues();
+
+    /** Get numbers for representative data indices. */
+    vectori getNValues();
 
     /** Saves the current state of the optimization process into a state class. */
     void saveOptimization(BOptState &state);

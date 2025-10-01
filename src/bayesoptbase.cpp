@@ -233,6 +233,16 @@ namespace bayesopt
     return results;
   }
 
+  vecOfvec BayesOptBase::getX()
+  {
+    return mModel->getData()->mX;
+  }
+
+  vectord BayesOptBase::getY()
+  {
+    return mModel->getData()->mY;
+  }
+
   size_t BayesOptBase::getBestIndex()
   {
     return mModel->getData()->mMinIndex;
@@ -241,6 +251,16 @@ namespace bayesopt
   vectori BayesOptBase::getBestIndices()
   {
     return mModel->getData()->indices;
+  }
+
+  vectord BayesOptBase::getValues()
+  {
+    return mModel->getData()->values;
+  }
+
+  vectori BayesOptBase::getNValues()
+  {
+    return mModel->getData()->nvalues;
   }
 
   // SAVE-RESTORE INTERFACE
