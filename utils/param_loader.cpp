@@ -74,9 +74,9 @@ namespace bayesopt
         }
         
         fp.readOrWrite("l_all", par.l_all);
+
         fp.readOrWrite("epsilon", par.epsilon);
-        fp.readOrWrite("force_jump", par.force_jump);
-        
+
         fp.readOrWrite("kernel.name", par.kernel.name);
         fp.readOrWrite("kernel.hp_mean", par.kernel.hp_mean);
         fp.readOrWrite("kernel.hp_std", par.kernel.hp_std);

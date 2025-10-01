@@ -27,9 +27,9 @@
 int main(int nargs, char *args[])
 {
   bayesopt::Parameters par;
+
   par.verbose_level = 0;
   par.noise = 1e-10;
-  par.force_jump = 30;
 
   std::ofstream log;
   std::clock_t start_t;

@@ -97,12 +97,6 @@ namespace bayesopt {
         bool l_all;                 /**< Learn all hyperparameters or only kernel */
 
         double epsilon;             /**< For epsilon-greedy exploration */
-        size_t force_jump;          /**< If >0, and the difference between two 
-                                        consecutive observations is pure noise, 
-                                        for n consecutive steps, force a random 
-                                        jump. Avoid getting stuck if model is bad 
-                                        and there is few data, however, it might 
-                                        reduce the accuracy. */
 
         KernelParameters kernel;    /**< Kernel parameters */
         MeanParameters mean;        /**< Mean (parametric function) parameters */  

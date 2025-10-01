@@ -111,30 +111,6 @@ namespace bayesopt
     // Find what is the next point.
     vectord xNext = nextPoint(); 
     double yNext = evaluateSampleInternal(xNext);
-
-    // If we are stuck in the same point for several iterations, try a random jump!
-    if (mParameters.force_jump)
-      {
-        if (std::pow(mYPrev - yNext,2) < mParameters.noise)
-          {
-            mCounterStuck++;
-            FILE_LOG(logDEBUG) << "Stuck for "<< mCounterStuck << " steps";
-          }
-        else
-          {
-            mCounterStuck = 0;
-          }
-        mYPrev = yNext;
-
-        if (mCounterStuck > mParameters.force_jump)
-          {
-            FILE_LOG(logINFO) << "Forced random query!";
-            xNext = samplePoint();
-            yNext = evaluateSampleInternal(xNext);
-            mCounterStuck = 0;
-          }
-      }
-
     double expectation = getPrediction(xNext)->getMean();
 
     mModel->addSample(xNext,yNext);

@@ -199,8 +199,7 @@ bopt_params initialize_parameters_to_default(void)
   params.sc_type = SC_MAP;
 
   params.epsilon = 0.0;
-  params.force_jump = 20;
-  
+
   params.crit_name = new char[128];
   strcpy(params.crit_name,CRIT_NAME.c_str());
   params.n_crit_params = 0;
@@ -274,10 +273,9 @@ namespace bayesopt {
         l_type = c_params.l_type;
         
         l_all = c_params.l_all;
-        
+
         epsilon = c_params.epsilon;
-        force_jump = c_params.force_jump;
-        
+
         kernel.name = std::string(c_params.kernel.name);
         kernel.hp_mean = bayesopt::utils::array2vector(c_params.kernel.hp_mean, 
 						       c_params.kernel.n_hp);
@@ -325,10 +323,9 @@ namespace bayesopt {
       c_params.l_type = l_type;
         
       c_params.l_all = l_all;
-        
+
       c_params.epsilon = epsilon;
-      c_params.force_jump = force_jump;
-        
+
       strcpy(c_params.kernel.name, kernel.name.c_str());
       //TODO (Javier): Should it be necessary to check size?
       for(size_t i=0; i<kernel.hp_mean.size(); i++){
@@ -404,10 +401,9 @@ namespace bayesopt {
         l_all = false;
         l_type = L_EMPIRICAL;
         sc_type = SC_MAP;
-        
+
         epsilon = 0.0;
-        force_jump = 20;
-        
+
         crit_name = CRIT_NAME;
     }
 }//namespace bayesopt

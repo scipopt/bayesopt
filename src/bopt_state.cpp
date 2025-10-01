@@ -91,9 +91,9 @@ namespace bayesopt
         }
         
         fp.readOrWrite("mParameters.l_all", mParameters.l_all);
+
         fp.readOrWrite("mParameters.epsilon", mParameters.epsilon);
-        fp.readOrWrite("mParameters.force_jump", mParameters.force_jump);
-        
+
         fp.readOrWrite("mParameters.kernel.name", mParameters.kernel.name);
         fp.readOrWrite("mParameters.kernel.hp_mean", mParameters.kernel.hp_mean);
         fp.readOrWrite("mParameters.kernel.hp_std", mParameters.kernel.hp_std);
