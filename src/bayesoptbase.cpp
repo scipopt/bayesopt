@@ -233,32 +233,32 @@ namespace bayesopt
     return results;
   }
 
-  vecOfvec BayesOptBase::getX()
+  const vecOfvec& BayesOptBase::getX()
   {
     return mModel->getData()->mX;
   }
 
-  vectord BayesOptBase::getY()
+  const vectord& BayesOptBase::getY()
   {
     return mModel->getData()->mY;
   }
 
-  size_t BayesOptBase::getBestIndex()
+  const size_t& BayesOptBase::getBestIndex()
   {
     return mModel->getData()->mMinIndex;
   }
 
-  vectori BayesOptBase::getBestIndices()
+  const vectori& BayesOptBase::getBestIndices()
   {
     return mModel->getData()->indices;
   }
 
-  vectord BayesOptBase::getValues()
+  const vectord& BayesOptBase::getValues()
   {
     return mModel->getData()->values;
   }
 
-  vectori BayesOptBase::getNValues()
+  const vectori& BayesOptBase::getNValues()
   {
     return mModel->getData()->nvalues;
   }
