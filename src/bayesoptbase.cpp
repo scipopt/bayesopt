@@ -126,6 +126,7 @@ namespace bayesopt
     }
 
     mModel->updateMinMax();
+
     plotStepData(mCurrentIter, xNext, yNext, expectation);
     mModel->updateCriteria(xNext);
     ++mCurrentIter;
@@ -182,15 +183,13 @@ namespace bayesopt
     // Put samples into model
     mModel->setSamples(xPoints, yPoints);
 
-    if(mParameters.verbose_level > 0)
-      {
-        mModel->plotDataset(logDEBUG);
-      }
-    
+    // Calculate the posterior model
     mModel->updateHyperParameters();
     mModel->fitSurrogateModel();
-
     mModel->updateMinMax();
+
+    if( mParameters.verbose_level > 0 )
+      mModel->plotDataset(logDEBUG);
 
     mCurrentIter = 0;
     mCounterStuck = 0;
@@ -285,17 +284,14 @@ namespace bayesopt
 
     // Set loaded and generated samples
     mModel->setSamples(xPoints, yPoints);
-        
-    if(mParameters.verbose_level > 0)
-    {
-        mModel->plotDataset(logDEBUG);
-    }
-    
+
     // Calculate the posterior model
     mModel->updateHyperParameters();
     mModel->fitSurrogateModel();
-
     mModel->updateMinMax();
+
+    if( mParameters.verbose_level > 0 )
+      mModel->plotDataset(logDEBUG);
 
     mCurrentIter = state.mCurrentIter;
     mCounterStuck = state.mCounterStuck;
