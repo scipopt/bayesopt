@@ -93,8 +93,7 @@ namespace bayesopt
 
   void PosteriorModel::storeEvaluationMeans()
   {
-    mData.values = vectord(mData.mY.size(), 0.0);
-    mData.nvalues = vectori(mData.mY.size(), 0);
+    mData.values = vecOfvec(mData.mY.size());
     mData.indices.resize(mData.mX.size());
     std::iota(mData.indices.begin(), mData.indices.end(), 0);
     std::sort(mData.indices.begin(), mData.indices.end(), [this](size_t i, size_t j)
@@ -111,8 +110,8 @@ namespace bayesopt
 
     if( !mData.indices.empty() )
     {
-      mData.values[mData.indices[beginposition]] += mData.mY[mData.indices[beginposition]];
-      ++mData.nvalues[mData.indices[beginposition]];
+      mData.values[mData.indices[beginposition]].resize(mData.values[mData.indices[beginposition]].size() + 1);
+      mData.values[mData.indices[beginposition]][mData.values[mData.indices[beginposition]].size() - 1] = mData.mY[mData.indices[beginposition]];
     }
 
     while( endposition < mData.indices.size() )
@@ -123,15 +122,23 @@ namespace bayesopt
         mData.indices[beginposition] = mData.indices[endposition];
       }
 
-      mData.values[mData.indices[beginposition]] += mData.mY[mData.indices[endposition]];
-      ++mData.nvalues[mData.indices[beginposition]];
+      mData.values[mData.indices[beginposition]].resize(mData.values[mData.indices[beginposition]].size() + 1);
+      mData.values[mData.indices[beginposition]][mData.values[mData.indices[beginposition]].size() - 1] = mData.mY[mData.indices[endposition]];
       ++endposition;
     }
 
     mData.indices.resize(beginposition + 1);
 
     for( const auto& index : mData.indices )
-      mData.values[index] /= mData.nvalues[index];
+    {
+      double sum = 0.0;
+
+      for( size_t i = 0; i < mData.values[index].size(); ++i )
+      {
+        sum += mData.values[index][i];
+        mData.values[index][i] = sum / (i + 1);
+      }
+    }
   }
 
   void PosteriorModel::updateMinMax()
@@ -148,17 +155,17 @@ namespace bayesopt
 
     for( const auto& index : mData.indices )
     {
-      if( minmean > mData.values[index] || ( minmean == mData.values[index] && ( minnumb < mData.nvalues[index] || ( minnumb == mData.nvalues[index] && mData.mMinIndex < index ) ) ) )
+      if( minmean > mData.values[index][mData.values[index].size() - 1] || ( minmean == mData.values[index][mData.values[index].size() - 1] && ( minnumb < mData.values[index].size() || ( minnumb == mData.values[index].size() && mData.mMinIndex < index ) ) ) )
       {
-        minmean = mData.values[index];
-        minnumb = mData.nvalues[index];
+        minmean = mData.values[index][mData.values[index].size() - 1];
+        minnumb = mData.values[index].size();
         mData.mMinIndex = index;
       }
 
-      if( maxmean < mData.values[index] || ( maxmean == mData.values[index] && ( maxnumb < mData.nvalues[index] || ( maxnumb == mData.nvalues[index] && mData.mMaxIndex < index ) ) ) )
+      if( maxmean < mData.values[index][mData.values[index].size() - 1] || ( maxmean == mData.values[index][mData.values[index].size() - 1] && ( maxnumb < mData.values[index].size() || ( maxnumb == mData.values[index].size() && mData.mMaxIndex < index ) ) ) )
       {
-        maxmean = mData.values[index];
-        maxnumb = mData.nvalues[index];
+        maxmean = mData.values[index][mData.values[index].size() - 1];
+        maxnumb = mData.values[index].size();
         mData.mMaxIndex = index;
       }
     }
@@ -170,10 +177,10 @@ namespace bayesopt
 
     std::sort(mData.indices.begin(), mData.indices.end(), [this](size_t i, size_t j)
     {
-      if( this->mData.values[i] != this->mData.values[j] )
-        return this->mData.values[i] < this->mData.values[j];
-      if( this->mData.nvalues[i] != this->mData.nvalues[j] )
-        return this->mData.nvalues[i] > this->mData.nvalues[j];
+      if( this->mData.values[i][this->mData.values[i].size() - 1] != this->mData.values[j][this->mData.values[j].size() - 1] )
+        return this->mData.values[i][this->mData.values[i].size() - 1] < this->mData.values[j][this->mData.values[j].size() - 1];
+      if( this->mData.values[i].size() != this->mData.values[j].size() )
+        return this->mData.values[i].size() > this->mData.values[j].size();
       return i > j;
     });
     assert(mData.indices.empty() || mData.indices[0] == mData.mMinIndex);

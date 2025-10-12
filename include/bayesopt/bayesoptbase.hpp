@@ -167,10 +167,7 @@ namespace bayesopt {
     const vectori& getBestIndices();
 
     /** Get averages for representative data indices. */
-    const vectord& getValues();
-
-    /** Get numbers for representative data indices. */
-    const vectori& getNValues();
+    const vecOfvec& getValues();
 
     /** Saves the current state of the optimization process into a state class. */
     void saveOptimization(BOptState &state);

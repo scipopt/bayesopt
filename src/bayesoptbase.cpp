@@ -231,14 +231,9 @@ namespace bayesopt
     return mModel->getData()->indices;
   }
 
-  const vectord& BayesOptBase::getValues()
+  const vecOfvec& BayesOptBase::getValues()
   {
     return mModel->getData()->values;
-  }
-
-  const vectori& BayesOptBase::getNValues()
-  {
-    return mModel->getData()->nvalues;
   }
 
   // SAVE-RESTORE INTERFACE
